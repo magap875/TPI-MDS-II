@@ -1,10 +1,9 @@
-<<<<<<< HEAD
+
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 
 /* PANTALLA PRINCIPAL */
 header{
@@ -70,7 +69,8 @@ footer img{
 footer p{
     margin-top: 2rem;
     font-size: 12px;
-=======
+}
+
 /* CONTENEDOR */
 .borde-principal {
     border-radius: 15px;
@@ -119,5 +119,4 @@ footer p{
 .form-control:focus {
     border-color: #ae8ae5 !important;
     box-shadow: 0 0 0 0.15rem rgba(174, 138, 229, 0.6) !important;
->>>>>>> d91fe3a5daedb2173b6605436bd7bf0b49043ac6
 }
