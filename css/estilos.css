@@ -1,0 +1,49 @@
+/* CONTENEDOR */
+.borde-principal {
+    border-radius: 15px;
+    border: 2px solid #ae8ae5;
+    background-color: white;
+}
+
+/* LOGOS */
+.logo, .logo-footer {
+    border: 2px solid #ae8ae5;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* BOTÓN */
+.btn-violeta {
+    background-color: #ae8ae5;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-violeta:hover {
+    background-color: #ae8ae5;
+}
+
+/* INPUTS */
+.form-control {
+    border-radius: 8px;
+}
+
+/* PREVIEW */
+.img-preview {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #ddd, #bbb);
+    border-radius: 10px;
+    margin: auto;
+}
+
+/* CARDS */
+.card {
+    border-radius: 12px;
+}
+
+.form-control:focus {
+    border-color: #ae8ae5 !important;
+    box-shadow: 0 0 0 0.15rem rgba(174, 138, 229, 0.6) !important;
+}
