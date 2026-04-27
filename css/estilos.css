@@ -1,0 +1,64 @@
+/* CSS DEL REGISTRO */
+.form-registro-container {
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.form-registro-title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.form-registro-container .form-floating > .form-control {
+    border-radius: 8px;
+    border: 1px solid #c3c3c3;
+}
+
+.form-registro-container .form-floating > .form-control:focus {
+    border-color: #ae8ae5;
+    box-shadow: 0 0 0 0.15rem #ae8ae596;
+}
+
+.form-registro-container .row {
+    margin-bottom: 10px;
+}
+
+.form-registro-container .form-check-input:checked {
+    background-color: #c3c3c3;
+    border-color: #c3c3c3;
+}
+
+.form-registro-rol {
+    margin-top: 15px;
+    padding: 10px 5px;
+}
+
+.form-registro-rol h6 {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-registro-btn {
+    margin-top: 25px;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background-color: #ae8ae5;
+}
+
+.form-registro-btn:hover {
+    transform: translateY(-2px);
+    border: 1px solid #ae8ae5;
+    background-color: #ae8ae596;
+    box-shadow: 0 6px 15px #ae8ae596;
+    transition: all 0.3s ease;
+}
