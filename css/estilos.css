@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* CSS DEL REGISTRO */
 .form-registro-container {
     max-width: 750px;
@@ -15,12 +21,12 @@
     color: #333;
 }
 
-.form-registro-container .form-floating > .form-control {
+.form-registro-container .form-floating>.form-control {
     border-radius: 8px;
     border: 1px solid #c3c3c3;
 }
 
-.form-registro-container .form-floating > .form-control:focus {
+.form-registro-container .form-floating>.form-control:focus {
     border-color: #ae8ae5;
     box-shadow: 0 0 0 0.15rem #ae8ae596;
 }
@@ -61,95 +67,23 @@
     background-color: #ae8ae596;
     box-shadow: 0 6px 15px #ae8ae596;
     transition: all 0.3s ease;
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
-/* PANTALLA PRINCIPAL */
-header{
-    height: 20%;
-}
-
-.navbar{
-    padding: 0;
-    margin: 0;
-}
-
-.navbar-nav .nav-link i{
-    color: #212529;
-    font-size: 1.3rem;
-}
-
-.navbar-nav{
-    margin-left: 65rem;
-}
-
-main{
-    height: 80%;
-}
-
-.cont-banner img{
-    width: 100%;
-    height: 30rem;
-    object-fit: cover;
-}
-
-.cont-titulo-producto {
-    margin-left: 7rem;
-    margin-top: 3rem;
-}
-
-.cont-titulo-producto h1{
-    font-size: 2rem;
-}
-
-.cont-titulo-producto h2{
-    font-size: 1.2rem;
-    margin-top: 0.5rem;
-}
-
-.cont-titulo-producto span i{
-    font-size: 1rem;
-    margin-left: 0.5rem;
-}
-
-footer{
-    margin-top: 3rem;
-    padding: 3rem 0 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-footer img{
-    width: 130px;
-}
-
-footer p{
-    margin-top: 2rem;
-    font-size: 12px;
-}
-
-/* CONTENEDOR */
+/* ALTA DE PRODUCTOS */
 .borde-principal {
     border-radius: 15px;
     border: 2px solid #ae8ae5;
     background-color: white;
 }
 
-/* LOGOS */
-.logo, .logo-footer {
+.logo,
+.logo-footer {
     border: 2px solid #ae8ae5;
     padding: 5px 15px;
     border-radius: 8px;
     font-weight: bold;
 }
 
-/* BOTÓN */
 .btn-violeta {
     background-color: #ae8ae5;
     border: none;
@@ -160,12 +94,10 @@ footer p{
     background-color: #ae8ae5;
 }
 
-/* INPUTS */
 .form-control {
     border-radius: 8px;
 }
 
-/* PREVIEW */
 .img-preview {
     width: 150px;
     height: 150px;
@@ -174,7 +106,6 @@ footer p{
     margin: auto;
 }
 
-/* CARDS */
 .card {
     border-radius: 12px;
 }
@@ -182,4 +113,70 @@ footer p{
 .form-control:focus {
     border-color: #ae8ae5 !important;
     box-shadow: 0 0 0 0.15rem rgba(174, 138, 229, 0.6) !important;
+}
+
+/* PANTALLA PRINCIPAL - INDEX*/
+header {
+    height: 20%;
+}
+
+.navbar {
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-nav .nav-link i {
+    color: #212529;
+    font-size: 1.3rem;
+}
+
+.navbar-nav {
+    margin-left: 65rem;
+}
+
+main {
+    height: 80%;
+}
+
+.cont-banner img {
+    width: 100%;
+    height: 30rem;
+    object-fit: cover;
+}
+
+.cont-titulo-producto {
+    margin-left: 7rem;
+    margin-top: 3rem;
+}
+
+.cont-titulo-producto h1 {
+    font-size: 2rem;
+}
+
+.cont-titulo-producto h2 {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.cont-titulo-producto span i {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+footer {
+    margin-top: 3rem;
+    padding: 3rem 0 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+footer img {
+    width: 130px;
+}
+
+footer p {
+    margin-top: 2rem;
+    font-size: 12px;
 }

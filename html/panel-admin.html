@@ -3,88 +3,99 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Admin</title>
-
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="/css/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Panel de Admin</title>
 </head>
+
 <body>
-
-<div class="container mt-5">
-
-    <!-- PANEL PRINCIPAL -->
-    <div class="panel-admin shadow-lg p-4">
-
-        <h2 class="text-center mb-4">Panel de Admin</h2>
-
-        <div class="row g-4">
-
-            <!-- FORMULARIO -->
-            <div class="col-md-6">
-                <div class="registro p-4 h-100">
-
-                    <h5 class="text-center mb-4">Registro de Producto</h5>
-
-                    <form action="#" method="post">
-
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Precio</label>
-                            <input type="number" name="precio" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Stock</label>
-                            <input type="number" name="stock" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Categoría</label>
-                            <input type="text" name="categoria" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">URL Imagen</label>
-                            <input type="text" name="imagen" class="form-control">
-                        </div>
-
-                        <button type="submit" class="btn btn-violeta w-100">
-                            Agregar producto
-                        </button>
-
-                    </form>
-
+    <header>
+        <nav class="navbar navbar-expand-lg border-bottom">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#"><img style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;"
+                        src="/img/logo.png" alt="logo-body-painting"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-user"></i></a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                    </div>
                 </div>
             </div>
+        </nav>
+    </header>
 
-            <!-- PREVIEW -->
-            <div class="col-md-6">
-                <div class="preview p-4 h-100 text-center">
+    <main>
+        <div class="container mt-5">
+            <!-- PANEL PRINCIPAL -->
+            <div class="panel-admin shadow-lg p-4">
+                <h2 class="text-center mb-4">Panel de Admin</h2>
+                <div class="row g-4">
+                    <!-- FORMULARIO -->
+                    <div class="col-md-6">
+                        <div class="registro p-4 h-100">
+                            <h5 class="text-center mb-4">Registro de Producto</h5>
+                            <form action="#" method="post">
 
-                    <h5 class="mb-4">Vista Previa</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" required>
+                                </div>
 
-                    <div class="img-preview mb-3"></div>
+                                <div class="mb-3">
+                                    <label class="form-label">Precio</label>
+                                    <input type="number" name="precio" class="form-control" required>
+                                </div>
 
-                    <p class="fw-bold mb-1">Nombre producto</p>
-                    <p class="text-muted mb-1">Precio</p>
-                    <p class="text-muted">Stock</p>
+                                <div class="mb-3">
+                                    <label class="form-label">Stock</label>
+                                    <input type="number" name="stock" class="form-control" required>
+                                </div>
 
+                                <div class="mb-3">
+                                    <label class="form-label">Categoría</label>
+                                    <input type="text" name="categoria" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">URL Imagen</label>
+                                    <input type="text" name="imagen" class="form-control">
+                                </div>
+
+                                <button type="submit" class="btn btn-violeta w-100">
+                                    Agregar producto
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="col-md-6">
+                        <div class="preview p-4 h-100 text-center">
+                            <h5 class="mb-4">Vista previa</h5>
+                            <div class="img-preview mb-3"></div>
+                            <p class="fw-bold mb-1">Nombre producto</p>
+                            <p class="text-muted mb-1">Precio</p>
+                            <p class="text-muted">Stock</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
+    </main>
 
-    </div>
-
-</div>
-
+    <footer class="border-top">
+        <img src="/img/logo.png" alt="logo-body-painting">
+        <p>&copy; 2025 Body Painting. Todos los derechos reservados.</p>
+    </footer>
 </body>
 
 </html>
