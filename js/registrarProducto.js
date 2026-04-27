@@ -7,9 +7,9 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const nombre = document.getElementById("nombre").value;
-    const precio = document.getElementById("precio").value;
+    const precio = Number(document.getElementById("precio").value);
     const marca = document.getElementById("marca").value;
-    const stock = document.getElementById("stock").value;
+    const stock = Number(document.getElementById("stock").value);
     const url = document.getElementById("imagen").value;
 
     const nuevoProducto = {
@@ -27,13 +27,13 @@ form.addEventListener("submit", async (e) => {
             body: JSON.stringify(nuevoProducto)
         });
 
-        if (!resp.ok) alert("Error al crear medico");
+        if (!resp.ok) alert("Error al registrar Producto");
 
-        alert("Medico registrado con exito");
+        alert("Producto registrado con exito");
         location.reload();
 
     } catch (error) {
-        alert("Error al registrar medico");
+        alert("Error al registrar Producto");
     }
 
 }); 
