@@ -8,6 +8,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/estilos.css">
+    <script src= "/js/registrarse.js" defer>  </script>
     <title>Registro</title>
 </head>
 
@@ -41,14 +42,14 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="nombre"><label
                                 for="floatingInputGrid">Nombre</label>
                         </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="apellido"><label
                                 for="floatingInputGrid">Apellido</label>
                         </div>
                     </div>
@@ -56,7 +57,7 @@
 
                 <div class="col-md">
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput"><label
+                        <input type="email" class="form-control" id="email"><label
                             for="floatingInput">Email</label>
                     </div>
                 </div>
@@ -64,14 +65,14 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="dni"><label
                                 for="floatingInputGrid">DNI</label>
                         </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="telefono"><label
                                 for="floatingInputGrid">Teléfono</label>
                         </div>
                     </div>
@@ -80,14 +81,14 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="pais"><label
                                 for="floatingInputGrid">País</label>
                         </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="provincia"><label
                                 for="floatingInputGrid">Provincia</label>
                         </div>
                     </div>
@@ -95,7 +96,7 @@
 
                 <div class="col-md">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput"><label
+                        <input type="text" class="form-control" id="localidad"><label
                             for="floatingInput">Localidad</label>
                     </div>
                 </div>
@@ -103,14 +104,14 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="calle"><label
                                 for="floatingInputGrid">Calle</label>
                         </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="numero"><label
                                 for="floatingInputGrid">Número</label>
                         </div>
                     </div>
@@ -119,14 +120,14 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="piso"><label
                                 for="floatingInputGrid">Piso</label>
                         </div>
                     </div>
 
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="floatingInputGrid"><label
+                            <input type="text" class="form-control" id="departamento"><label
                                 for="floatingInputGrid">Departamento</label>
                         </div>
                     </div>
@@ -135,17 +136,17 @@
                 <div class="g-2 form-registro-rol">
                     <h6>Rol</h6>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                            value="option1">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="cliente"
+                            value="Cliente">
                         <label class="form-check-label" for="inlineRadio1">Cliente</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                            value="option2">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="admin"
+                            value="Administrador">
                         <label class="form-check-label" for="inlineRadio2">Administrador</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="vendedor"
                             value="option3" disabled>
                         <label class="form-check-label" for="inlineRadio3">Vendedor</label>
                     </div>
