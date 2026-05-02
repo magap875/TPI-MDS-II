@@ -69,6 +69,24 @@
     transition: all 0.3s ease;
 }
 
+.cuenta{
+    font-size: smaller;
+}
+
+.form-registro-rol {
+    display: flex;
+    margin-top: 15px;
+    padding: 10px 5px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.opciones{
+    display: flex;
+    flex-direction: column;
+}
+
 /* ALTA DE PRODUCTOS */
 .borde-principal {
     border-radius: 15px;
