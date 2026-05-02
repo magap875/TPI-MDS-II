@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="/js/registrarProducto.js" defer>  </script>
+    <script src="../js/panel-admin.js" type="module">  </script>
     <title>Panel de Admin</title>
 </head>
 
@@ -25,7 +25,6 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link" href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
                         <a class="nav-link" href="#"><i class="fa-solid fa-user"></i></a>
                         <a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
                     </div>
@@ -38,7 +37,7 @@
         <div class="container mt-5">
             <!-- PANEL PRINCIPAL -->
             <div class="panel-admin shadow-lg p-4">
-                <h2 class="text-center mb-4">Panel Administrador</h2>
+                <h2 class="text-center mb-4 fw-bold">Panel Administrador</h2>
                 <div class="row g-4">
                     <!-- FORMULARIO -->
                     <div class="col-md-6">
@@ -47,27 +46,27 @@
                             <form action="#" name="registroProducto" method="post">
 
                                 <div class="mb-3 form-floating">
-                                    <input type="text" name="nombre" class="form-control" required><label
-                                        for="floatingInputGrid">Nombre</label>
+                                    <input type="text" name="nombre" class="form-control" id="nombre" required><label
+                                        for="nombre">Nombre</label>
                                 </div>
 
                                 <div class="mb-3 form-floating">
-                                    <input type="number" name="precio" min="1" class="form-control" required><label
-                                        for="floatingInputGrid">Precio</label>
+                                    <input type="number" name="precio" min="1" class="form-control" id="precio" required><label
+                                        for="precio">Precio</label>
                                 </div>
 
                                 <div class="mb-3 form-floating">
-                                    <input type="text" name="marca" min="1" class="form-control" required><label
-                                        for="floatingInputGrid">Marca</label>
+                                    <input type="text" name="marca" min="1" class="form-control" id="marca" required><label
+                                        for="marca">Marca</label>
                                 </div>
                                 <div class="mb-3 form-floating">
-                                    <input type="number" name="stock" min="1" class="form-control" required><label
-                                        for="floatingInputGrid">Stock</label>
+                                    <input type="number" name="stock" min="1" class="form-control" id="stock" required><label
+                                        for="stock">Stock</label>
                                 </div>
 
                                 <div class="mb-3 form-floating">
-                                    <input type="text" name="imagen" class="form-control"><label
-                                        for="floatingInputGrid">URL Imagen</label>
+                                    <input type="file" name="imagen" class="form-control" accept=".jpg,.jpeg,.png"
+                                        id="imagen" required><label for="imagen">Tipo PNG o JPG</label>
                                 </div>
 
                                 <button type="submit" name="btnRegistrar" class="btn btn-violeta w-100">
@@ -79,17 +78,32 @@
 
                     <!-- PREVIEW -->
                     <div class="col-md-6">
-                        <div class="preview p-4 h-100 text-center">
-                            <h5 class="mb-4">Vista previa</h5>
-                            <div class="img-preview mb-3"></div>
-                            <p class="fw-bold mb-1">Nombre producto</p>
-                            <p class="text-muted mb-1">Precio</p>
-                            <p class="text-muted">Stock</p>
+                        <div class="preview p-4 h-100">
+                            <h5 class="mb-4 text-center">Vista previa</h5>
+
+                            <div class="preview-card">
+                                <div class="img-preview"></div>
+
+                                <div class="preview-body text-center mt-3">
+                                    <p class="fw-bold mb-1" id="preview-nombre">Nombre producto</p>
+                                    <p class="text-muted mb-1" id="preview-precio">Precio</p>
+                                    <p class="text-muted mb-1" id="preview-marca">Marca</p>
+                                    <p class="text-muted" id="preview-stock">Stock</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <hr>
+                <div class="container mt-4">
+                    <h3 class="mb-3">Productos cargados</h3>
+                    <input type="text" id="filtro-productos" class="form-control mb-3" placeholder="Buscar producto por nombre...">
+                    <div id="contenedor-productos" class="row g-4"></div>
+                </div>
             </div>
         </div>
+
+
     </main>
 
     <footer class="border-top">

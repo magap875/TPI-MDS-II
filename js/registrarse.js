@@ -34,22 +34,36 @@ form.addEventListener("submit", async (e) => {
         rol
     };
 
-    const checkDni = await fetch(
-        "https://69e616eace4e908a155ef130.mockapi.io/usuario"
+    const checkEmail = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
+    const usuarios = await checkEmail.json();
+    const emailNormalizado = email.trim().toLowerCase();
+
+    const existeEmail = usuarios.some(
+        usuario => usuario.email.trim().toLowerCase() === emailNormalizado
     );
 
-    const usuarios = await checkDni.json();
-
-    const dniNormalizado = dni.trim();
-
-    const existeDni = usuarios.some(
-        usuario => usuario.dni.trim() === dniNormalizado
-    );
-
-    if (existeDni) {
-        alert("El DNI ya está registrado");
+    if (existeEmail) {
+        alert("El email ya está registrado.");
         return;
     }
+
+
+    // const checkDni = await fetch(
+    //     "https://69e616eace4e908a155ef130.mockapi.io/usuario"
+    // );
+
+    // const usuarios = await checkDni.json();
+
+    // const dniNormalizado = dni.trim();
+
+    // const existeDni = usuarios.some(
+    //     usuario => usuario.dni.trim() === dniNormalizado
+    // );
+
+    // if (existeDni) {
+    //     alert("El DNI ya está registrado");
+    //     return;
+    // }
     // const checkDni = await fetch(`https://69e616eace4e908a155ef130.mockapi.io/usuario?dni=${dni}`);
     // const dataDni = await checkDni.json();
     // console.log(dataDni);
@@ -73,7 +87,7 @@ form.addEventListener("submit", async (e) => {
             return;
         }
 
-        alert(`${rol} registrado con éxito`);
+        alert(`${rol} registrado con éxito.`);
         location.reload();
 
     } catch (error) {

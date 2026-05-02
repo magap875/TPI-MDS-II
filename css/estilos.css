@@ -69,7 +69,7 @@
     transition: all 0.3s ease;
 }
 
-.cuenta{
+.cuenta {
     font-size: smaller;
 }
 
@@ -82,7 +82,7 @@
     align-items: center;
 }
 
-.opciones{
+.opciones {
     display: flex;
     flex-direction: column;
 }
@@ -131,6 +131,51 @@
 .form-control:focus {
     border-color: #ae8ae5 !important;
     box-shadow: 0 0 0 0.15rem rgba(174, 138, 229, 0.6) !important;
+}
+
+.preview-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.img-preview {
+    width: 100%;
+    height: 250px;
+    background: #eee;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.img-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.btn-editar {
+    background-color: #ae8ae5;
+    color: white;
+    border: none;
+}
+
+.btn-editar:hover {
+    background-color: #ae8ae563;
+}
+
+.btn-eliminar {
+    background-color: #e17171; 
+    color: white;
+    border: none;
+}
+
+.btn-eliminar:hover {
+    background-color: #fca5a587;
 }
 
 /* PANTALLA PRINCIPAL - INDEX*/
