@@ -1,16 +1,13 @@
-const form = document.getElementById("registroProducto"); // captura el formulario
-
-const btnRegistrarProducto = document.getElementById("btnRegistrar"); // registra el producto
-
+const form = document.querySelector('form[name="registroProducto"]');
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nombre = document.getElementById("nombre").value;
-    const precio = Number(document.getElementById("precio").value);
-    const marca = document.getElementById("marca").value;
-    const stock = Number(document.getElementById("stock").value);
-    const url = document.getElementById("imagen").value;
+    const nombre = document.getElementsByName("nombre")[0].value;
+    const precio = Number(document.getElementsByName("precio")[0].value);
+    const marca = document.getElementsByName("marca")[0].value;
+    const stock = Number(document.getElementsByName("stock")[0].value);
+    const url = document.getElementsByName("imagen")[0].value;
 
     const nuevoProducto = {
         nombre,
@@ -20,20 +17,30 @@ form.addEventListener("submit", async (e) => {
         url
     };
 
+    // agregar control de registro de producto vendido, para solicitar imagen en caso de no registrar venta.
+
+
+
+    // registro de producto
     try {
         const resp = await fetch("https://69e616eace4e908a155ef130.mockapi.io/producto", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(nuevoProducto)
         });
 
-        if (!resp.ok) alert("Error al registrar Producto");
+        if (!resp.ok) {
+            alert("Error al registrar producto");
+            return;
+        }
 
-        alert("Producto registrado con exito");
+        alert("Producto registrado con éxito");
         location.reload();
 
     } catch (error) {
-        alert("Error al registrar Producto");
+        console.error(error);
+        alert("Error al registrar producto");
     }
-
-}); 
+});

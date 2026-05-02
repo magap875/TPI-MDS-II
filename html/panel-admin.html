@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="/js/registrarProducto.js" defer>  </script>
     <title>Panel de Admin</title>
 </head>
 
@@ -43,7 +44,7 @@
                     <div class="col-md-6">
                         <div class="registro p-4 h-100">
                             <h2 class="text-center mb-4 form-registro-title">Alta de productos</h2>
-                            <form action="#" method="post">
+                            <form action="#" name="registroProducto" method="post">
 
                                 <div class="mb-3 form-floating">
                                     <input type="text" name="nombre" class="form-control" required><label
@@ -56,6 +57,10 @@
                                 </div>
 
                                 <div class="mb-3 form-floating">
+                                    <input type="text" name="marca" min="1" class="form-control" required><label
+                                        for="floatingInputGrid">Marca</label>
+                                </div>
+                                <div class="mb-3 form-floating">
                                     <input type="number" name="stock" min="1" class="form-control" required><label
                                         for="floatingInputGrid">Stock</label>
                                 </div>
@@ -65,7 +70,7 @@
                                         for="floatingInputGrid">URL Imagen</label>
                                 </div>
 
-                                <button type="submit" class="btn btn-violeta w-100">
+                                <button type="submit" name="btnRegistrar" class="btn btn-violeta w-100">
                                     Agregar producto
                                 </button>
                             </form>
