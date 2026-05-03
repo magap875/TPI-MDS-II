@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="../js/panel-admin.js" type="module">  </script>
     <title>Panel de Admin</title>
 </head>
 
@@ -16,7 +15,7 @@
     <header>
         <nav class="navbar navbar-expand-lg border-bottom">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"><img style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;"
+                <a class="navbar-brand" href="../index.html"><img style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;"
                         src="/img/logo.png" alt="logo-body-painting"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
@@ -25,7 +24,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-link" href="#"><i class="fa-solid fa-user"></i></a>
+                        <a class="nav-link" href="../index.html"><i class="fa-solid fa-user"></i></a>
                         <a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
                     </div>
                 </div>
@@ -51,17 +50,17 @@
                                 </div>
 
                                 <div class="mb-3 form-floating">
-                                    <input type="number" name="precio" min="1" class="form-control" id="precio" required><label
-                                        for="precio">Precio</label>
+                                    <input type="number" name="precio" min="1" class="form-control" id="precio"
+                                        required><label for="precio">Precio</label>
                                 </div>
 
                                 <div class="mb-3 form-floating">
-                                    <input type="text" name="marca" min="1" class="form-control" id="marca" required><label
-                                        for="marca">Marca</label>
+                                    <input type="text" name="marca" min="1" class="form-control" id="marca"
+                                        required><label for="marca">Marca</label>
                                 </div>
                                 <div class="mb-3 form-floating">
-                                    <input type="number" name="stock" min="1" class="form-control" id="stock" required><label
-                                        for="stock">Stock</label>
+                                    <input type="number" name="stock" min="1" class="form-control" id="stock"
+                                        required><label for="stock">Stock</label>
                                 </div>
 
                                 <div class="mb-3 form-floating">
@@ -97,7 +96,13 @@
                 <hr>
                 <div class="container mt-4">
                     <h3 class="mb-3">Productos cargados</h3>
-                    <input type="text" id="filtro-productos" class="form-control mb-3" placeholder="Buscar producto por nombre...">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="filtro-productos" class="form-control"
+                            placeholder="Buscar producto por nombre...">
+                    </div>
                     <div id="contenedor-productos" class="row g-4"></div>
                 </div>
             </div>
@@ -110,6 +115,9 @@
         <img src="/img/logo.png" alt="logo-body-painting">
         <p>&copy; 2025 Body Painting. Todos los derechos reservados.</p>
     </footer>
+
+    <script src="../js/panel-admin.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

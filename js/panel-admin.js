@@ -19,9 +19,9 @@ async function subirImagen(file) {
 
 // REGISTRO DE PRODUCTOS
 const form = document.querySelector('form[name="registroProducto"]');
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("SUBMIT FUNCIONANDO");
 
     const nombre = document.getElementsByName("nombre")[0].value;
     const precio = Number(document.getElementsByName("precio")[0].value);
@@ -30,17 +30,35 @@ form.addEventListener("submit", async (e) => {
     const file = document.getElementsByName("imagen")[0].files[0];
 
     if (!file) {
-        alert("Tenés que subir una imagen");
+        Swal.fire({
+            icon: "warning",
+            title: "Falta imagen",
+            text: "Tenés que subir una imagen"
+        });
         return;
     }
 
     if (!file.type.includes("image/jpeg") && !file.type.includes("image/png")) {
-        alert("Solo se permiten imágenes JPG o PNG");
+        Swal.fire({
+            icon: "error",
+            title: "Formato inválido",
+            text: "Solo se permiten imágenes JPG o PNG"
+        });
         return;
     }
 
     try {
-        // subir la imagen
+        // LOADER
+        Swal.fire({
+            title: "Cargando producto...",
+            text: "Por favor esperá",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // subir imagen
         const imageUrl = await subirImagen(file);
 
         const nuevoProducto = {
@@ -52,6 +70,7 @@ form.addEventListener("submit", async (e) => {
         };
 
         const productos = await obtenerProductos();
+
         const nombreNormalizado = nombre.trim().toLowerCase();
         const marcaNormalizada = marca.trim().toLowerCase();
 
@@ -61,15 +80,17 @@ form.addEventListener("submit", async (e) => {
         );
 
         if (existeProducto) {
-            alert("El producto ya existe.");
+            Swal.fire({
+                icon: "error",
+                title: "Producto duplicado",
+                text: "Ese producto ya existe"
+            });
             form.reset();
-
             previewNombre.textContent = "Nombre producto";
             previewPrecio.textContent = "Precio";
             previewMarca.textContent = "Marca";
             previewStock.textContent = "Stock";
             previewImgContainer.innerHTML = "";
-
             return;
         }
 
@@ -82,19 +103,44 @@ form.addEventListener("submit", async (e) => {
         });
 
         if (!resp.ok) {
-            alert("Error al registrar producto.");
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo registrar el producto"
+            });
             return;
         }
 
-        alert("Producto registrado con éxito.");
-        location.reload();
+        Swal.fire({
+            icon: "success",
+            title: "Producto registrado",
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
 
     } catch (error) {
         console.error(error);
-        alert("Error al registrar producto.");
+
+        Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: "Ocurrió un problema al registrar el producto"
+        });
     }
 });
 
+function formatearTexto(texto) {
+    return texto
+        .toLowerCase()
+        .split(" ")
+        .filter(p => p.length > 0)
+        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+        .join(" ");
+}
 
 // OBTENCION DE PRODUCTOS
 const URL = "https://69e616eace4e908a155ef130.mockapi.io/producto";
@@ -208,7 +254,7 @@ const previewImgContainer = document.querySelector(".img-preview");
 
 // actualiza el texto
 inputNombre.addEventListener("input", () => {
-    previewNombre.textContent = inputNombre.value || "Nombre producto";
+    previewNombre.textContent = formatearTexto(inputNombre.value) || "Nombre del producto";
 });
 
 inputPrecio.addEventListener("input", () => {

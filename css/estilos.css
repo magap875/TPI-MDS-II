@@ -169,7 +169,7 @@
 }
 
 .btn-eliminar {
-    background-color: #e17171; 
+    background-color: #e17171;
     color: white;
     border: none;
 }
@@ -177,6 +177,7 @@
 .btn-eliminar:hover {
     background-color: #fca5a587;
 }
+
 
 /* PANTALLA PRINCIPAL - INDEX*/
 header {
@@ -224,6 +225,36 @@ main {
 .cont-titulo-producto span i {
     font-size: 1rem;
     margin-left: 0.5rem;
+}
+
+.tit {
+    margin-top: 30px;
+    padding: 30px 0 15px 0;
+    margin-bottom: 0;
+}
+
+#vista-productos {
+    width: 100%;
+    padding: 0 60px;
+    box-sizing: border-box;
+}
+
+#filtro {
+    width: 100%;
+}
+
+.btn-carrito{
+    margin-top: 10px !important;
+    background-color: black;
+    font-size: .8rem !important;
+    color: white;
+}
+
+.btn-carrito:hover{
+    transform: translateY(-3px);
+    background-color: #212529;
+    color: white;
+    transition: all .3s ease;
 }
 
 footer {

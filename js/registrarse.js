@@ -1,4 +1,3 @@
-
 const form = document.getElementById("form-registro");
 
 form.addEventListener("submit", async (e) => {
@@ -34,48 +33,31 @@ form.addEventListener("submit", async (e) => {
         rol
     };
 
-    const checkEmail = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
-    const usuarios = await checkEmail.json();
-    const emailNormalizado = email.trim().toLowerCase();
-
-    const existeEmail = usuarios.some(
-        usuario => usuario.email.trim().toLowerCase() === emailNormalizado
-    );
-
-    if (existeEmail) {
-        alert("El email ya está registrado.");
-        return;
-    }
-
-
-    // const checkDni = await fetch(
-    //     "https://69e616eace4e908a155ef130.mockapi.io/usuario"
-    // );
-
-    // const usuarios = await checkDni.json();
-
-    // const dniNormalizado = dni.trim();
-
-    // const existeDni = usuarios.some(
-    //     usuario => usuario.dni.trim() === dniNormalizado
-    // );
-
-    // if (existeDni) {
-    //     alert("El DNI ya está registrado");
-    //     return;
-    // }
-    // const checkDni = await fetch(`https://69e616eace4e908a155ef130.mockapi.io/usuario?dni=${dni}`);
-    // const dataDni = await checkDni.json();
-    // console.log(dataDni);
-
-    // if (dataDni.length > 0) {
-    //     alert("El DNI ya está registrado");
-    //     return;
-    // }
-
-
-
     try {
+        Swal.fire({
+            title: "Registrando usuario...",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        const checkEmail = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
+        const usuarios = await checkEmail.json();
+
+        const emailNormalizado = email.trim().toLowerCase();
+
+        const existeEmail = usuarios.some(
+            usuario => usuario.email.trim().toLowerCase() === emailNormalizado
+        );
+
+        if (existeEmail) {
+            Swal.fire({
+                icon: "error",
+                title: "Email ya registrado",
+                text: "Probá con otro correo"
+            });
+            return;
+        }
+
         const resp = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -83,15 +65,28 @@ form.addEventListener("submit", async (e) => {
         });
 
         if (!resp.ok) {
-            alert(`Error al registrar ${rol}`);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: `No se pudo registrar ${rol}`
+            });
             return;
         }
 
-        alert(`${rol} registrado con éxito.`);
-        location.reload();
+        Swal.fire({
+            icon: "success",
+            title: `${rol} registrado correctamente`,
+            text: "El usuario fue creado con éxito",
+            confirmButtonText: "OK"
+        }).then(() => {
+            window.location.href = "./login.html";
+        });
 
     } catch (error) {
-        alert(`Error al registrar ${rol}`);
+        Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: `No se pudo registrar ${rol}`
+        });
     }
 });
-
