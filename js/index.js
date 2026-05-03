@@ -2,6 +2,14 @@ let productosGlobal = [];
 
 const URL = "https://69e616eace4e908a155ef130.mockapi.io/producto";
 
+// mostrar carrito si es cliente
+const rol = localStorage.getItem("rol");
+const carrito = document.getElementById("icono-carrito");
+
+if (rol === "cliente" && carrito) {
+    carrito.classList.remove("d-none");
+}
+
 async function obtenerProductos() {
     const res = await fetch(URL);
     return await res.json();
@@ -14,6 +22,18 @@ function mostrarProductos(productos) {
     contenedor.innerHTML = "";
 
     productos.forEach(p => {
+
+        //boton carrito solo para clientes
+        let botonCarrito = "";
+
+        if (rol === "cliente") {
+            botonCarrito = `
+                <button class="btn btn-carrito mt-auto">
+                    Agregar al carrito
+                </button>
+            `;
+        }
+
         contenedor.innerHTML += `
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card shadow-sm h-100 border-0">
@@ -24,9 +44,7 @@ function mostrarProductos(productos) {
                         <h5 class="card-title">${p.nombre}</h5>
                         <p class="card-text mb-1">Marca: ${p.marca}</p>
                         <p class="card-text mb-1">Precio: $${p.precio}</p>
-                        <button class="btn btn-carrito mt-auto">
-                            Agregar al carrito
-                        </button>
+                        ${botonCarrito}
                     </div>
 
                 </div>
