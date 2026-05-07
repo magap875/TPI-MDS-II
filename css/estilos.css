@@ -274,3 +274,18 @@ footer p {
     margin-top: 2rem;
     font-size: 12px;
 }
+/* CARRITO*/
+.carrito-card {
+    border-radius: 1rem;
+}
+
+.carrito-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+#btn-confirmar-pedido {
+    border-radius: 0.7rem;
+    padding: 0.7rem;
+}

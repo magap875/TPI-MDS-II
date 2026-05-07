@@ -28,8 +28,8 @@ function mostrarProductos(productos) {
 
         if (rol === "cliente") {
             botonCarrito = `
-                <button class="btn btn-carrito mt-auto">
-                    Agregar al carrito
+                <button class="btn btn-carrito mt-auto" data-id="${p.id}">
+                Agregar al carrito
                 </button>
             `;
         }
@@ -51,12 +51,80 @@ function mostrarProductos(productos) {
             </div>
         `;
     });
+    activarBotonesCarrito();
 }
 
 async function cargarYRenderizar() {
     productosGlobal = await obtenerProductos();
     mostrarProductos(productosGlobal);
 }
+
+function activarBotonesCarrito() {
+
+    const botones = document.querySelectorAll(".btn-carrito");
+
+    botones.forEach(boton => {
+
+        boton.addEventListener("click", () => {
+
+            const idProducto = boton.dataset.id;
+
+            agregarAlCarrito(idProducto);
+
+        });
+
+    });
+
+}
+
+function agregarAlCarrito(idProducto) {
+
+    const producto = productosGlobal.find(p => p.id == idProducto);
+
+    if (!producto) {
+        alert("Producto no encontrado");
+        return;
+    }
+
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+    const itemExistente = carrito.find(item => item.productoId == producto.id);
+
+    if (itemExistente) {
+        itemExistente.cantidad++;
+        itemExistente.subtotal = itemExistente.cantidad * itemExistente.precioUnitario;
+    } else {
+        carrito.push({
+            productoId: producto.id,
+            nombreProducto: producto.nombre,
+            tipoProducto: producto.tipoProducto || "SIMPLE",
+            imagen: producto.url,
+            cantidad: 1,
+            precioUnitario: Number(producto.precio),
+            subtotal: Number(producto.precio)
+        });
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+
+    actualizarContadorCarrito();
+
+    alert("Producto agregado al carrito");
+}
+
+function actualizarContadorCarrito() {
+
+    const contador = document.getElementById("contador-carrito");
+
+    if (!contador) return;
+
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+    const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
+    contador.textContent = cantidadTotal;
+}
+
 
 /* filtro en tiempo real */
 const inputFiltro = document.getElementById("filtro");
@@ -79,4 +147,7 @@ if (inputFiltro) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", cargarYRenderizar);
+document.addEventListener("DOMContentLoaded", () => {
+    cargarYRenderizar();
+    actualizarContadorCarrito();
+});
