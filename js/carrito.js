@@ -205,7 +205,7 @@ async function confirmarPedido() {
 
     // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
     if (resp.ok) {
-        alert("Pediro registrado exitosamente")
+        alert("Pedido registrado exitosamente")
         localStorage.removeItem("carrito");
         location.reload();
 

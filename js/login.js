@@ -20,5 +20,9 @@ form.addEventListener("submit", (e) => {
         case "cliente":
             window.location.href = "../index.html";
             break;
+        
+            case "vendedor":
+            window.location.href = "./panel-vendedor.html";
+            break;
     }
 });
