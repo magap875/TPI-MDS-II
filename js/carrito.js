@@ -22,10 +22,11 @@ function renderizarCarrito() {
 
     let total = 0;
 
+    // foreach para llenar el carrito con la tarjeta de cada objeto
     carrito.forEach((item, index) => {
-    total += item.subtotal;
+        total += item.subtotal;
 
-    contenedor.innerHTML += `
+        contenedor.innerHTML += `
         <div class="card mb-3 shadow-sm border-0 carrito-card">
             <div class="card-body">
                 <div class="row align-items-center g-3">
@@ -64,12 +65,14 @@ function renderizarCarrito() {
             </div>
         </div>
     `;
-});
+    });
 
     totalCarrito.textContent = `$${total}`;
 
     activarEventosCarrito();
 }
+
+// instancia los eventos para cuando hagan click en sumar, restar o eliminar
 
 function activarEventosCarrito() {
     document.querySelectorAll(".btn-sumar").forEach(btn => {
@@ -83,6 +86,7 @@ function activarEventosCarrito() {
     document.querySelectorAll(".btn-eliminar").forEach(btn => {
         btn.addEventListener("click", () => eliminarProducto(btn.dataset.index));
     });
+
 }
 
 function sumarCantidad(index) {
@@ -119,3 +123,96 @@ function eliminarProducto(index) {
 }
 
 renderizarCarrito();
+
+// CONFIRMAR PEDIDO
+const btnConfirmarPedido = document.getElementById("btn-confirmar-pedido");
+btnConfirmarPedido.addEventListener("click", confirmarPedido);
+
+async function confirmarPedido() {
+    const carrito = obtenerCarrito();
+    console.log(carrito);
+
+    // ATRIBUTOS DEL OBJETO
+    //calcula el total
+    let clienteId;
+    let clienteNombre;
+    let clienteEmail;
+    const fechaPedido = new Date();
+    let domicilioEnvio;
+    const estadoPedido = "Pendiente";
+    const formaPago = "EFECTIVO CONTRA ENTREGA ";
+    let total = 0;
+    carrito.forEach((item) => {
+        total += item.subtotal;
+    });
+    const motivoCancelacion = "";
+    const detalles = carrito;
+
+    // solicitar un dni para cargar datos de envio
+    const dni = prompt("Ingrese su DNI:");
+
+    try {
+        const response = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
+
+        if (!response.ok) {
+            throw new Error("Error al obtener clientes");
+        }
+
+        const clientes = await response.json();
+
+        // Buscar cliente por DNI
+        const cliente = clientes.find(c => c.dni === dni);
+
+        if (!cliente) {
+            alert("Usuario no Registrado")
+            console.log("Usuario no registrado");
+            return;
+        }
+
+        // Guardar datos del cliente
+        clienteId = cliente.id;
+        clienteNombre = cliente.nombre;
+        clienteEmail = cliente.email;
+        domicilioEnvio = cliente.calle + " " + cliente.numero;
+
+    } catch (error) {
+        console.error("Error:", error.message);
+    }
+    //}
+
+    // crear el objeto para guardar en la api
+    const nuevoPedido = {
+        clienteId,
+        clienteNombre,
+        clienteEmail,
+        fechaPedido,
+        estadoPedido,
+        formaPago,
+        domicilioEnvio,
+        total,
+        motivoCancelacion,
+        detalles
+    };
+
+    // guardar el pedido en la api
+    const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(nuevoPedido)
+    });
+
+    // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
+    if (resp.ok) {
+        alert("Pediro registrado exitosamente")
+        localStorage.removeItem("carrito");
+        location.reload();
+
+    } else {
+        console.log("Error al guardar el pedido");
+    }
+
+}
+
+// HASTA ACA LA CONFIRMACION
