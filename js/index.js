@@ -82,7 +82,11 @@ function agregarAlCarrito(idProducto) {
     const producto = productosGlobal.find(p => p.id == idProducto);
 
     if (!producto) {
-        alert("Producto no encontrado");
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Producto no encontrado"
+        });
         return;
     }
 
@@ -91,6 +95,14 @@ function agregarAlCarrito(idProducto) {
     const itemExistente = carrito.find(item => item.productoId == producto.id);
 
     if (itemExistente) {
+        if (itemExistente.cantidad >= producto.stock) {
+            Swal.fire({
+                icon: "warning",
+                title: "Stock insuficiente",
+                text: "No hay más stock disponible"
+            });
+            return;
+        }
         itemExistente.cantidad++;
         itemExistente.subtotal = itemExistente.cantidad * itemExistente.precioUnitario;
     } else {
@@ -109,7 +121,13 @@ function agregarAlCarrito(idProducto) {
 
     actualizarContadorCarrito();
 
-    alert("Producto agregado al carrito");
+    Swal.fire({
+        icon: "success",
+        title: "Producto agregado",
+        text: "El producto se agregó al carrito",
+        timer: 1500,
+        showConfirmButton: false
+    });
 }
 
 function actualizarContadorCarrito() {

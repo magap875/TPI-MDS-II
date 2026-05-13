@@ -1,5 +1,17 @@
+const API_PRODUCTOS = "https://69e616eace4e908a155ef130.mockapi.io/producto";
+let productosGlobal = [];
 const contenedor = document.getElementById("contenedor-carrito");
 const totalCarrito = document.getElementById("total-carrito");
+
+async function obtenerProductos() {
+    const res = await fetch(API_PRODUCTOS);
+    productosGlobal = await res.json();
+    return productosGlobal;
+}
+
+async function cargarProductos() {
+    productosGlobal = await obtenerProductos();
+}
 
 function obtenerCarrito() {
     return JSON.parse(localStorage.getItem("carrito")) || [];
@@ -23,9 +35,9 @@ function renderizarCarrito() {
     let total = 0;
 
     carrito.forEach((item, index) => {
-    total += item.subtotal;
+        total += item.subtotal;
 
-    contenedor.innerHTML += `
+        contenedor.innerHTML += `
         <div class="card mb-3 shadow-sm border-0 carrito-card">
             <div class="card-body">
                 <div class="row align-items-center g-3">
@@ -64,7 +76,7 @@ function renderizarCarrito() {
             </div>
         </div>
     `;
-});
+    });
 
     totalCarrito.textContent = `$${total}`;
 
@@ -86,12 +98,40 @@ function activarEventosCarrito() {
 }
 
 function sumarCantidad(index) {
+
     const carrito = obtenerCarrito();
 
-    carrito[index].cantidad++;
-    carrito[index].subtotal = carrito[index].cantidad * carrito[index].precioUnitario;
+    const item = carrito[index];
+
+    const producto = productosGlobal.find(
+        p => p.id == item.productoId
+    );
+
+    if (!producto) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Producto no encontrado"
+        });
+        return;
+    }
+
+    if (item.cantidad >= producto.stock) {
+        Swal.fire({
+            icon: "warning",
+            title: "Stock insuficiente",
+            text: "No hay más stock disponible"
+        });
+        return;
+    }
+
+    item.cantidad++;
+
+    item.subtotal =
+        item.cantidad * item.precioUnitario;
 
     guardarCarrito(carrito);
+
     renderizarCarrito();
 }
 
@@ -109,13 +149,40 @@ function restarCantidad(index) {
     renderizarCarrito();
 }
 
-function eliminarProducto(index) {
+async function eliminarProducto(index) {
+
+    const resultado = await Swal.fire({
+        title: "¿Eliminar producto?",
+        text: "El producto se quitará del carrito",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar"
+    });
+
+    if (!resultado.isConfirmed) return;
+
     const carrito = obtenerCarrito();
 
     carrito.splice(index, 1);
 
     guardarCarrito(carrito);
+
+    renderizarCarrito();
+
+    Swal.fire({
+        icon: "success",
+        title: "Producto eliminado",
+        timer: 1200,
+        showConfirmButton: false
+    });
+}
+
+async function iniciar() {
+
+    await obtenerProductos();
+
     renderizarCarrito();
 }
 
-renderizarCarrito();
+iniciar();
