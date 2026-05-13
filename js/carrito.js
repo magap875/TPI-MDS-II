@@ -1,5 +1,17 @@
+const API_PRODUCTOS = "https://69e616eace4e908a155ef130.mockapi.io/producto";
+let productosGlobal = [];
 const contenedor = document.getElementById("contenedor-carrito");
 const totalCarrito = document.getElementById("total-carrito");
+
+async function obtenerProductos() {
+    const res = await fetch(API_PRODUCTOS);
+    productosGlobal = await res.json();
+    return productosGlobal;
+}
+
+async function cargarProductos() {
+    productosGlobal = await obtenerProductos();
+}
 
 function obtenerCarrito() {
     return JSON.parse(localStorage.getItem("carrito")) || [];
@@ -90,12 +102,40 @@ function activarEventosCarrito() {
 }
 
 function sumarCantidad(index) {
+
     const carrito = obtenerCarrito();
 
-    carrito[index].cantidad++;
-    carrito[index].subtotal = carrito[index].cantidad * carrito[index].precioUnitario;
+    const item = carrito[index];
+
+    const producto = productosGlobal.find(
+        p => p.id == item.productoId
+    );
+
+    if (!producto) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Producto no encontrado"
+        });
+        return;
+    }
+
+    if (item.cantidad >= producto.stock) {
+        Swal.fire({
+            icon: "warning",
+            title: "Stock insuficiente",
+            text: "No hay más stock disponible"
+        });
+        return;
+    }
+
+    item.cantidad++;
+
+    item.subtotal =
+        item.cantidad * item.precioUnitario;
 
     guardarCarrito(carrito);
+
     renderizarCarrito();
 }
 
@@ -113,106 +153,40 @@ function restarCantidad(index) {
     renderizarCarrito();
 }
 
-function eliminarProducto(index) {
+async function eliminarProducto(index) {
+
+    const resultado = await Swal.fire({
+        title: "¿Eliminar producto?",
+        text: "El producto se quitará del carrito",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar"
+    });
+
+    if (!resultado.isConfirmed) return;
+
     const carrito = obtenerCarrito();
 
     carrito.splice(index, 1);
 
     guardarCarrito(carrito);
+
+    renderizarCarrito();
+
+    Swal.fire({
+        icon: "success",
+        title: "Producto eliminado",
+        timer: 1200,
+        showConfirmButton: false
+    });
+}
+
+async function iniciar() {
+
+    await obtenerProductos();
+
     renderizarCarrito();
 }
 
 renderizarCarrito();
-
-// CONFIRMAR PEDIDO
-const btnConfirmarPedido = document.getElementById("btn-confirmar-pedido");
-btnConfirmarPedido.addEventListener("click", confirmarPedido);
-
-async function confirmarPedido() {
-    const carrito = obtenerCarrito();
-    console.log(carrito);
-
-    // ATRIBUTOS DEL OBJETO
-    //calcula el total
-    let clienteId;
-    let clienteNombre;
-    let clienteEmail;
-    const fechaPedido = new Date();
-    let domicilioEnvio;
-    const estadoPedido = "Pendiente";
-    const formaPago = "EFECTIVO CONTRA ENTREGA ";
-    let total = 0;
-    carrito.forEach((item) => {
-        total += item.subtotal;
-    });
-    const motivoCancelacion = "";
-    const detalles = carrito;
-
-    // solicitar un dni para cargar datos de envio
-    const dni = prompt("Ingrese su DNI:");
-
-    try {
-        const response = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
-
-        if (!response.ok) {
-            throw new Error("Error al obtener clientes");
-        }
-
-        const clientes = await response.json();
-
-        // Buscar cliente por DNI
-        const cliente = clientes.find(c => c.dni === dni);
-
-        if (!cliente) {
-            alert("Usuario no Registrado")
-            console.log("Usuario no registrado");
-            return;
-        }
-
-        // Guardar datos del cliente
-        clienteId = cliente.id;
-        clienteNombre = cliente.nombre;
-        clienteEmail = cliente.email;
-        domicilioEnvio = cliente.calle + " " + cliente.numero;
-
-    } catch (error) {
-        console.error("Error:", error.message);
-    }
-    //}
-
-    // crear el objeto para guardar en la api
-    const nuevoPedido = {
-        clienteId,
-        clienteNombre,
-        clienteEmail,
-        fechaPedido,
-        estadoPedido,
-        formaPago,
-        domicilioEnvio,
-        total,
-        motivoCancelacion,
-        detalles
-    };
-
-    // guardar el pedido en la api
-    const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(nuevoPedido)
-    });
-
-    // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
-    if (resp.ok) {
-        alert("Pedido registrado exitosamente")
-        localStorage.removeItem("carrito");
-        location.reload();
-
-    } else {
-        console.log("Error al guardar el pedido");
-    }
-
-}
-
-// HASTA ACA LA CONFIRMACION
