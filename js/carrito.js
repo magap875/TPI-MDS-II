@@ -34,6 +34,7 @@ function renderizarCarrito() {
 
     let total = 0;
 
+    // foreach para llenar el carrito con la tarjeta de cada objeto
     carrito.forEach((item, index) => {
         total += item.subtotal;
 
@@ -83,6 +84,8 @@ function renderizarCarrito() {
     activarEventosCarrito();
 }
 
+// instancia los eventos para cuando hagan click en sumar, restar o eliminar
+
 function activarEventosCarrito() {
     document.querySelectorAll(".btn-sumar").forEach(btn => {
         btn.addEventListener("click", () => sumarCantidad(btn.dataset.index));
@@ -95,6 +98,7 @@ function activarEventosCarrito() {
     document.querySelectorAll(".btn-eliminar").forEach(btn => {
         btn.addEventListener("click", () => eliminarProducto(btn.dataset.index));
     });
+
 }
 
 function sumarCantidad(index) {
@@ -185,4 +189,4 @@ async function iniciar() {
     renderizarCarrito();
 }
 
-iniciar();
+renderizarCarrito();

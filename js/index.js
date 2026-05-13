@@ -56,7 +56,8 @@ function mostrarProductos(productos) {
 
 async function cargarYRenderizar() {
     productosGlobal = await obtenerProductos();
-    mostrarProductos(productosGlobal);
+    const productosActivos = productosGlobal.filter(p => p.activo !== false);
+    mostrarProductos(productosActivos);
 }
 
 function activarBotonesCarrito() {
@@ -152,6 +153,7 @@ if (inputFiltro) {
         const texto = inputFiltro.value.trim().toLowerCase();
 
         const filtrados = productosGlobal.filter(p =>
+            p.activo !== false &&
             p.nombre.toLowerCase().includes(texto)
         );
 

@@ -27,7 +27,18 @@ form.addEventListener("submit", async (e) => {
     const precio = Number(document.getElementsByName("precio")[0].value);
     const marca = document.getElementsByName("marca")[0].value;
     const stock = Number(document.getElementsByName("stock")[0].value);
+    const stockMinimo = Number(document.getElementsByName("stockMinimo")[0].value);
     const file = document.getElementsByName("imagen")[0].files[0];
+
+    if (!Number.isInteger(stockMinimo) || stockMinimo <= 0) {
+        Swal.fire({
+            icon: "error",
+            title: "Stock mínimo inválido",
+            text: "Debe ser un número entero positivo"
+        });
+
+        return;
+    }
 
     if (!file) {
         Swal.fire({
@@ -66,6 +77,8 @@ form.addEventListener("submit", async (e) => {
             precio,
             marca,
             stock,
+            stockMinimo,
+            activo: true,
             url: imageUrl
         };
 
@@ -152,7 +165,8 @@ async function obtenerProductos() {
 
 async function renderizarProductos() {
     productosGlobal = await obtenerProductos();
-    mostrarProductos(productosGlobal);
+    const productosActivos = productosGlobal.filter(p => p.activo !== false);
+    mostrarProductos(productosActivos);
 }
 
 function mostrarProductos(productos) {
@@ -188,8 +202,15 @@ function mostrarProductos(productos) {
 
                 <div class="d-flex flex-wrap gap-3 mt-2">
                 <span>Precio: $${p.precio}</span>
-                <span>Stock: ${p.stock}</span>
+
+                <span style="
+                color: ${Number(p.stock) <= Number(p.stockMinimo) ? '#d66b75' : 'inherit'};
+                font-weight: ${Number(p.stock) <= Number(p.stockMinimo) ? 'bold' : 'normal'};
+                ">
+                    Stock: ${p.stock}
+                </span>
                 </div>
+
             </div>
             </div>
 
@@ -197,13 +218,17 @@ function mostrarProductos(productos) {
             <div class="col-md-3 text-end px-3">
             <div class="d-flex justify-content-end gap-2">
 
-                <button class="btn btn-sm btn-editar">
-                <i class="fa-solid fa-pen"></i>
-                </button>
+            <button class="btn btn-sm btn-editar"
+            data-id="${p.id}"
+            data-stock-minimo="${p.stockMinimo}">
+            <i class="fa-solid fa-pen"></i>
+            </button>
 
-                <button class="btn btn-sm btn-eliminar">
-                <i class="fa-solid fa-trash"></i>
-                </button>
+            <button class="btn btn-sm btn-eliminar"
+            data-id="${p.id}"
+            data-activo="${p.activo}">
+            <i class="fa-solid fa-trash"></i>
+            </button>
 
             </div>
             </div>
@@ -218,6 +243,141 @@ function mostrarProductos(productos) {
 
 renderizarProductos();
 
+document.addEventListener("click", (e) => {
+    const btnEditar = e.target.closest(".btn-editar");
+
+    if (!btnEditar) return;
+
+    const id = btnEditar.dataset.id;
+    const stockMinimo = btnEditar.dataset.stockMinimo;
+
+    document.getElementById("editar-id").value = id;
+    document.getElementById("editar-stock-minimo").value = stockMinimo;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("modalEditarProducto")
+    );
+    modal.show();
+});
+
+document.addEventListener("click", async (e) => {
+
+    const btnEliminar = e.target.closest(".btn-eliminar");
+
+    if (!btnEliminar) return;
+
+    const id = btnEliminar.dataset.id;
+
+    const activo = btnEliminar.dataset.activo === "true";
+
+    if (!activo) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Producto ya dado de baja"
+        });
+
+        return;
+    }
+
+    const confirmar = await Swal.fire({
+        icon: "warning",
+        title: "¿Dar de baja producto?",
+        text: "El producto dejará de estar disponible",
+        showCancelButton: true,
+        confirmButtonText: "Sí, dar de baja",
+        cancelButtonText: "Cancelar"
+    });
+
+    if (!confirmar.isConfirmed) return;
+
+    const resp = await fetch(`${URL}/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            ...productosGlobal.find(p => p.id === id),
+            activo: false
+        })
+    });
+
+    if (!resp.ok) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo dar de baja"
+        });
+
+        return;
+    }
+
+    Swal.fire({
+        icon: "success",
+        title: "Producto dado de baja",
+        showConfirmButton: false,
+        timer: 1500
+    });
+
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+});
+
+document.getElementById("btn-guardar-stock")
+    .addEventListener("click", async () => {
+
+        const id = document.getElementById("editar-id").value;
+
+        const stockMinimo = Number(
+            document.getElementById("editar-stock-minimo").value
+        );
+
+        if (!Number.isInteger(stockMinimo) || stockMinimo <= 0) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Valor inválido",
+                text: "Debe ser un entero positivo"
+            });
+
+            return;
+        }
+
+        const resp = await fetch(`${URL}/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                stockMinimo
+            })
+        });
+
+        if (!resp.ok) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar"
+            });
+
+            return;
+        }
+
+        Swal.fire({
+            icon: "success",
+            title: "Stock mínimo actualizado",
+            timer: 1500,
+            showConfirmButton: false
+        });
+
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    });
+
 // FILTRO BUSQUEDA PRODUCTOS
 const inputFiltro = document.getElementById("filtro-productos");
 
@@ -225,8 +385,9 @@ inputFiltro.addEventListener("input", () => {
     const texto = inputFiltro.value.trim().toLowerCase();
 
     const filtrados = productosGlobal.filter(p =>
-        p.nombre.toLowerCase().includes(texto)
-    );
+    p.activo !== false &&
+    p.nombre.toLowerCase().includes(texto)
+);
 
     if (filtrados.length === 0) {
         document.getElementById("contenedor-productos").innerHTML =
@@ -245,7 +406,9 @@ const inputPrecio = formPreview.precio;
 const inputMarca = formPreview.marca;
 const inputStock = formPreview.stock;
 const inputImagen = formPreview.imagen;
+const inputStockMinimo = formPreview.stockMinimo;
 
+const previewStockMinimo = document.getElementById("preview-stock-minimo");
 const previewNombre = document.getElementById("preview-nombre");
 const previewPrecio = document.getElementById("preview-precio");
 const previewMarca = document.getElementById("preview-marca");
@@ -273,6 +436,12 @@ inputStock.addEventListener("input", () => {
     previewStock.textContent = inputStock.value
         ? `Stock: ${inputStock.value}`
         : "Stock";
+});
+
+inputStockMinimo.addEventListener("input", () => {
+    previewStockMinimo.textContent = inputStockMinimo.value
+        ? `Stock mínimo: ${inputStockMinimo.value}`
+        : "Stock mínimo";
 });
 
 // imagen
