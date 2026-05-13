@@ -11,15 +11,18 @@
 </head>
 
 <body>
+
     <header>
         <nav class="navbar navbar-expand-lg border-bottom">
             <div class="container-fluid">
+
                 <a class="navbar-brand" href="../index.html">
                     <img
                         style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;"
                         src="/img/logo.png"
                         alt="logo-body-painting">
                 </a>
+
                 <button class="navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
@@ -27,6 +30,7 @@
 
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         <a class="nav-link" href="../index.html">
@@ -34,6 +38,7 @@
                         </a>
                     </div>
                 </div>
+
             </div>
         </nav>
     </header>
@@ -41,26 +46,54 @@
     <main>
 
         <div class="container mt-5">
+
             <div class="panel-admin shadow-lg p-4">
+
                 <h2 class="text-center mb-4 fw-bold">
                     Panel Vendedor
                 </h2>
+
                 <h4 class="mb-4">
-                    Pedidos pendientes de entrega
+                    Gestión de pedidos
                 </h4>
+
+                <!-- FILTRO -->
+                <div class="d-flex justify-content-end mb-3">
+
+                    <select id="filtro-estado" class="form-select w-auto">
+
+                        <option value="Todos">Todos</option>
+                        <option value="Pendiente">Pendientes</option>
+                        <option value="Listo">Listos</option>
+                        <option value="Retirado">Retirados</option>
+                        <option value="Entregado">Entregados</option>
+                        <option value="Cancelado">Cancelados</option>
+
+                    </select>
+
+                </div>
+
+                <!-- CONTENEDOR -->
                 <div id="contenedor-pedidos" class="d-flex flex-column gap-3">
                 </div>
+
             </div>
+
         </div>
+
     </main>
 
     <footer class="border-top">
+
         <img src="/img/logo.png" alt="logo-body-painting">
+
         <p>&copy; 2025 Body Painting. Todos los derechos reservados.</p>
+
     </footer>
 
-    <script src="../js/panel-vendedor.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="../js/panel-vendedor.js" type="module"></script>
 
 </body>
 
