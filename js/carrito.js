@@ -7,11 +7,9 @@ async function obtenerProductos() {
     const res = await fetch(API_PRODUCTOS);
     productosGlobal = await res.json();
     return productosGlobal;
-    
+
     console.log(productosGlobal);
 }
-
-
 
 async function cargarProductos() {
     productosGlobal = await obtenerProductos();
@@ -195,15 +193,16 @@ const btnVerCliente = document.getElementById("btn-confirmar-pedido");
 btnVerCliente.addEventListener("click", () => {
 
     const carrito = obtenerCarrito();
-        console.log(carrito);
-        if (carrito.length === 0) {
-            alertaModal("El carrito está vacío");
+    console.log(carrito);
+    if (carrito.length === 0) {
+        alertaModal("El carrito está vacío");
         return;
     }
-      // ATRIBUTOS DEL OBJETO
+    // ATRIBUTOS DEL OBJETO
     //calcula el total
     let clienteId;
     let clienteNombre;
+    let clienteDirecciones = [];
     let clienteEmail;
     const fechaPedido = new Date();
     let calle;
@@ -305,10 +304,44 @@ btnVerCliente.addEventListener("click", () => {
         .getElementById("btnBuscarCliente")
         .addEventListener("click", async () => {
 
-        dni = document.getElementById("inputDni").value;
+            dni = document.getElementById("inputDni").value;
 
             await buscarCliente(dni);
-            if (clienteId != null){
+            if (clienteId != null) {
+
+                const direcciones =
+                    clienteDirecciones;
+
+                let opcionesDirecciones = "";
+
+                if (direcciones.length > 0) {
+
+                    opcionesDirecciones =
+                        direcciones.map(dir => `
+
+                            <option value="${dir.id}">
+                                ${dir.calle}
+                                ${dir.numero}
+                                - ${dir.localidad}
+
+                                ${dir.predeterminada
+                                ? "(Predeterminada)"
+                                : ""
+                            }
+
+                            </option>
+
+                        `).join("");
+
+                } else {
+
+                    opcionesDirecciones = `
+                            <option disabled selected>
+                                No tiene direcciones cargadas
+                            </option>
+                        `;
+                }
+
                 document.getElementById("resultadoCliente").innerHTML = `
                 <hr>
 
@@ -323,14 +356,26 @@ btnVerCliente.addEventListener("click", () => {
                 </p>
 
                 <p>
-                    <strong>Domicilio de Envio:</strong> 
-                    ${calle} ${numCalle}
-                </p>
-
-                <p>
                     <strong>Email:</strong> 
                     ${clienteEmail}
                 </p>
+
+                <label class="form-label mt-3">
+                    Dirección de envío
+                </label>
+
+                <select
+                    class="form-select mb-3"
+                    id="selectDireccion">
+                    ${opcionesDirecciones}
+                </select>
+
+                <button
+                    class="btn btn-secondary w-100 mb-3"
+                    id="btnAgregarDireccion"
+                >
+                    Agregar dirección
+                </button>
             
                                 <p>
                     <strong>Forma de Pago:</strong> 
@@ -353,28 +398,45 @@ btnVerCliente.addEventListener("click", () => {
                     Aceptar
                 </button>
             `;
-            const btnAceptarPedido = document.getElementById("btnAceptarPedido");
+                document
+                    .getElementById("btnAgregarDireccion")
+                    .addEventListener("click", () => {
 
-            btnAceptarPedido.addEventListener("click", async () => {
+                        mostrarModalDireccion(clienteId);
+                    });
 
-                const nuevoPedido = {
-                    clienteId,
-                    clienteNombre,
-                    clienteEmail,
-                    fechaPedido,
-                    estadoPedido,
-                    formaPago,
-                    domicilioEnvio: calle + " " + numCalle,
-                    total,
-                    motivoCancelacion,
-                    detalles
-                };
+                const btnAceptarPedido = document.getElementById("btnAceptarPedido");
 
-                console.log(nuevoPedido);
+                btnAceptarPedido.addEventListener("click", async () => {
+                    const indexDireccion =
+                        document.getElementById(
+                            "selectDireccion"
+                        ).selectedIndex;
 
-                await guardarPedido(nuevoPedido);
+                    const direccionSeleccionada =
+                        direcciones[indexDireccion];
 
-            });
+                    const nuevoPedido = {
+                        clienteId,
+                        clienteNombre,
+                        clienteEmail,
+                        fechaPedido,
+                        estadoPedido,
+                        formaPago,
+                        domicilioEnvio:
+                            `${direccionSeleccionada.calle}
+                            ${direccionSeleccionada.numero}
+                            - ${direccionSeleccionada.localidad}`,
+                        total,
+                        motivoCancelacion,
+                        detalles
+                    };
+
+                    console.log(nuevoPedido);
+
+                    await guardarPedido(nuevoPedido);
+
+                });
             }
         });
 
@@ -382,7 +444,7 @@ btnVerCliente.addEventListener("click", () => {
     modalElemento.addEventListener("hidden.bs.modal", () => {
         modalElemento.remove();
     });
-    async function buscarCliente(dni){
+    async function buscarCliente(dni) {
         try {
             const response = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
 
@@ -396,7 +458,7 @@ btnVerCliente.addEventListener("click", () => {
             const cliente = clientes.find(c => String(c.dni) === String(dni));
 
             if (!cliente) {
-                
+
                 console.log("Usuario no registrado");
                 alertaModal("Usuario no Registrado");
                 document.getElementById("inputDni").value = "";
@@ -407,15 +469,16 @@ btnVerCliente.addEventListener("click", () => {
             clienteId = cliente.id;
             clienteNombre = cliente.nombre;
             clienteEmail = cliente.email;
-            calle = cliente.calle;
-            numCalle = cliente.numero;
+
+            clienteDirecciones =
+                cliente.direcciones || [];
 
         } catch (error) {
             console.error("Error:", error.message);
         }
     }
 
-    async function guardarPedido(nuevoPedido){
+    async function guardarPedido(nuevoPedido) {
         const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
             method: "POST",
             headers: {
@@ -425,7 +488,7 @@ btnVerCliente.addEventListener("click", () => {
         });
 
         // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
-        if (resp.ok) { 
+        if (resp.ok) {
 
             await actualizarStockProductos(detalles);
             modal.hide();
@@ -485,12 +548,333 @@ btnVerCliente.addEventListener("click", () => {
             }
         }
     }
+}
+);
 
-    function alertaModal(texto){
+//FIN GUARDADO DE PEDIDO
+
+async function iniciar() {
+
+    await obtenerProductos();
+
+    renderizarCarrito();
+}
+
+iniciar();
+
+// Registrar dirección de envío
+
+function validarDireccion(direccion) {
+
+    if (
+        !direccion.pais ||
+        !direccion.provincia ||
+        !direccion.localidad ||
+        !direccion.calle ||
+        !direccion.numero
+    ) {
+
+        return "Complete todos los datos obligatorios";
+    }
+
+    if (
+        isNaN(direccion.numero) ||
+        Number(direccion.numero) <= 0
+    ) {
+
+        return "Número inválido";
+    }
+
+    return null;
+}
+
+async function registrarDireccion(
+    clienteId,
+    direccion
+) {
+
+    const response = await fetch(
+        `https://69e616eace4e908a155ef130.mockapi.io/usuario/${clienteId}`
+    );
+
+    const cliente = await response.json();
+
+    // VALIDAR
+    const error =
+        validarDireccion(direccion);
+
+    if (error) {
+
+        alertaModal(error);
+        return;
+    }
+
+    // SI NO EXISTE ARRAY
+    if (!cliente.direcciones) {
+
+        cliente.direcciones = [];
+    }
+
+    // VALIDAR DUPLICADA
+    const existe =
+        cliente.direcciones.some(dir =>
+
+            dir.calle.toLowerCase()
+            === direccion.calle.toLowerCase()
+
+            &&
+
+            String(dir.numero)
+            === String(direccion.numero)
+
+            &&
+
+            dir.localidad.toLowerCase()
+            === direccion.localidad.toLowerCase()
+        );
+
+    if (existe) {
+
+        alertaModal(
+            "La dirección ya existe"
+        );
+
+        return;
+    }
+
+    // AGREGAR
+    direccion.id = crypto.randomUUID();
+    
+    cliente.direcciones.push(direccion);
+
+    // ACTUALIZAR USUARIO
+    const updateResponse = await fetch(
+        `https://69e616eace4e908a155ef130.mockapi.io/usuario/${clienteId}`,
+        {
+
+            method: "PUT",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify(cliente)
+        }
+    );
+
+    if (updateResponse.ok) {
+
+        return true;
+
+    } else {
+
+        alertaModal(
+            "Error al registrar dirección"
+        );
+
+        return false;
+    }
+}
+
+function mostrarModalDireccion(
+    clienteId
+) {
+
+    const modalHTML = `
+
+    <div
+        class="modal fade"
+        id="modalDireccion"
+        tabindex="-1"
+    >
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Agregar Dirección
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input
+                        type="text"
+                        id="pais"
+                        class="form-control mb-2"
+                        placeholder="País"
+                    >
+
+                    <input
+                        type="text"
+                        id="provincia"
+                        class="form-control mb-2"
+                        placeholder="Provincia"
+                    >
+
+                    <input
+                        type="text"
+                        id="localidad"
+                        class="form-control mb-2"
+                        placeholder="Localidad"
+                    >
+
+                    <input
+                        type="text"
+                        id="calle"
+                        class="form-control mb-2"
+                        placeholder="Calle"
+                    >
+
+                    <input
+                        type="number"
+                        id="numero"
+                        class="form-control mb-2"
+                        placeholder="Número"
+                    >
+
+                    <input
+                        type="text"
+                        id="piso"
+                        class="form-control mb-2"
+                        placeholder="Piso"
+                    >
+
+                    <input
+                        type="text"
+                        id="departamento"
+                        class="form-control mb-2"
+                        placeholder="Departamento"
+                    >
+
+                    <button
+                        class="btn btn-success w-100"
+                        id="btnGuardarDireccion"
+                    >
+                        Guardar Dirección
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    `;
+
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        modalHTML
+    );
+
+    const modalElemento =
+        document.getElementById(
+            "modalDireccion"
+        );
+
+    const modal =
+        new bootstrap.Modal(
+            modalElemento
+        );
+
+    modal.show();
+
+    document
+        .getElementById(
+            "btnGuardarDireccion"
+        )
+        .addEventListener(
+            "click",
+            async () => {
+
+                const direccion = {
+
+                    pais:
+                        document.getElementById(
+                            "pais"
+                        ).value,
+
+                    provincia:
+                        document.getElementById(
+                            "provincia"
+                        ).value,
+
+                    localidad:
+                        document.getElementById(
+                            "localidad"
+                        ).value,
+
+                    calle:
+                        document.getElementById(
+                            "calle"
+                        ).value,
+
+                    numero:
+                        document.getElementById(
+                            "numero"
+                        ).value,
+
+                    piso:
+                        document.getElementById(
+                            "piso"
+                        ).value,
+
+                    departamento:
+                        document.getElementById(
+                            "departamento"
+                        ).value,
+
+                    predeterminada: false
+                };
+
+                const direccionGuardada =
+                    await registrarDireccion(
+                        clienteId,
+                        direccion
+                    );
+
+                if (direccionGuardada) {
+
+                    modal.hide();
+
+                    alertaModal(
+                        "Dirección registrada correctamente"
+                    );
+
+                    location.reload();
+                }
+            }
+        );
+
+    modalElemento.addEventListener(
+        "hidden.bs.modal",
+        () => {
+
+            modalElemento.remove();
+        }
+    );
+}
+
+function alertaModal(texto) {
+
     const modalExistente = document.getElementById("Alerta");
+
     if (modalExistente) {
         modalExistente.remove();
     }
+
     const modalHTML = `
         <div class="modal fade" id="Alerta" tabindex="-1">
             <div class="modal-dialog">
@@ -526,41 +910,36 @@ btnVerCliente.addEventListener("click", () => {
         </div>
     `;
 
-    // Insertar modal
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        modalHTML
+    );
 
-    // Obtener modal
-    const modalElemento = document.getElementById("Alerta");
+    const modalElemento =
+        document.getElementById("Alerta");
 
-    // Crear instancia bootstrap
-    const modal = new bootstrap.Modal(modalElemento);
+    const modal =
+        new bootstrap.Modal(modalElemento);
 
-    // Mostrar
     modal.show();
 
-    if (texto === "Pedido registrado exitosamente"){
+    if (texto === "Pedido registrado exitosamente") {
+
         document
-    .getElementById("aceptarMensaje")
-    .addEventListener("click", () => {
+            .getElementById("aceptarMensaje")
+            .addEventListener("click", () => {
 
-        location.reload();
+                location.reload();
 
-    });}
+            });
+    }
 
-    // Eliminar del DOM al cerrar
-    modalElemento.addEventListener("hidden.bs.modal", () => {
-        modalElemento.remove();
-    });
+    modalElemento.addEventListener(
+        "hidden.bs.modal",
+        () => {
+
+            modalElemento.remove();
+
         }
-});
-
-//FIN GUARDADO DE PEDIDO
-
-async function iniciar() {
-
-    await obtenerProductos();
-
-    renderizarCarrito();
+    );
 }
-
-iniciar();
