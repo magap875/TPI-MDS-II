@@ -7,7 +7,11 @@ async function obtenerProductos() {
     const res = await fetch(API_PRODUCTOS);
     productosGlobal = await res.json();
     return productosGlobal;
+    
+    console.log(productosGlobal);
 }
+
+
 
 async function cargarProductos() {
     productosGlobal = await obtenerProductos();
@@ -45,8 +49,8 @@ function renderizarCarrito() {
 
                     <div class="col-12 col-md-3">
                         <img src="${item.imagen}" 
-                             alt="${item.nombreProducto}" 
-                             class="img-fluid rounded carrito-img">
+                            alt="${item.nombreProducto}" 
+                            class="img-fluid rounded carrito-img">
                     </div>
 
                     <div class="col-12 col-md-5">
@@ -82,7 +86,7 @@ function renderizarCarrito() {
     totalCarrito.textContent = `$${total}`;
 
     activarEventosCarrito();
-   
+
 }
 
 // instancia los eventos para cuando hagan click en sumar, restar o eliminar
@@ -183,13 +187,6 @@ async function eliminarProducto(index) {
     });
 }
 
-async function iniciar() {
-
-    await obtenerProductos();
-
-    renderizarCarrito();
-}
-
 
 // GUARDADO DE PEDIDO
 
@@ -213,7 +210,7 @@ btnVerCliente.addEventListener("click", () => {
     let numCalle;
     let dni;
     const estadoPedido = "Pendiente";
-    const formaPago = "EFECTIVO CONTRA ENTREGA ";
+    const formaPago = "EFECTIVO CONTRA ENTREGA";
     let total = 0;
     carrito.forEach((item) => {
         total += item.subtotal;
@@ -277,7 +274,7 @@ btnVerCliente.addEventListener("click", () => {
                         >
 
                         <button 
-                            class="btn btn-primary w-100"
+                            class="btn btn-primary w-100 btn-editar"
                             id="btnBuscarCliente">
                             Buscar
                         </button>
@@ -308,7 +305,7 @@ btnVerCliente.addEventListener("click", () => {
         .getElementById("btnBuscarCliente")
         .addEventListener("click", async () => {
 
-           dni = document.getElementById("inputDni").value;
+        dni = document.getElementById("inputDni").value;
 
             await buscarCliente(dni);
             if (clienteId != null){
@@ -341,7 +338,7 @@ btnVerCliente.addEventListener("click", () => {
                 </p>
                 <div>
                     <strong>DETALLE DE PEDIDO</strong> 
-                   
+                
                     ${detallesHTML}
                 </div>
 
@@ -396,7 +393,7 @@ btnVerCliente.addEventListener("click", () => {
             const clientes = await response.json();
 
             // Buscar cliente por DNI
-           const cliente = clientes.find(c => String(c.dni) === String(dni));
+            const cliente = clientes.find(c => String(c.dni) === String(dni));
 
             if (!cliente) {
                 
@@ -559,4 +556,11 @@ btnVerCliente.addEventListener("click", () => {
 
 //FIN GUARDADO DE PEDIDO
 
-renderizarCarrito();
+async function iniciar() {
+
+    await obtenerProductos();
+
+    renderizarCarrito();
+}
+
+iniciar();
