@@ -22,15 +22,22 @@ form.addEventListener("submit", async (e) => {
         apellido,
         dni,
         email,
-        pais,
-        provincia,
-        localidad,
         telefono,
-        calle,
-        numero,
-        piso,
-        dpto,
-        rol
+        rol,
+
+        direcciones: [
+            {
+                id: Date.now(), // id temporal para mockapi
+                pais,
+                provincia,
+                localidad,
+                calle,
+                numero,
+                piso,
+                dpto,
+                predeterminada: true
+            }
+        ]
     };
 
     try {
