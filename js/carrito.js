@@ -7,7 +7,7 @@ async function obtenerProductos() {
     const res = await fetch(API_PRODUCTOS);
     productosGlobal = await res.json();
     return productosGlobal;
-    
+
     console.log(productosGlobal);
 }
 
@@ -195,12 +195,17 @@ const btnVerCliente = document.getElementById("btn-confirmar-pedido");
 btnVerCliente.addEventListener("click", () => {
 
     const carrito = obtenerCarrito();
-        console.log(carrito);
-        if (carrito.length === 0) {
-            alertaModal("El carrito está vacío");
+    console.log(carrito);
+    if (carrito.length === 0) {
+
+        Swal.fire({
+            icon: "error",
+            title: "El carrito esta vacio"
+        });
+        //alertaModal("El carrito está vacío");
         return;
     }
-      // ATRIBUTOS DEL OBJETO
+    // ATRIBUTOS DEL OBJETO
     //calcula el total
     let clienteId;
     let clienteNombre;
@@ -305,10 +310,10 @@ btnVerCliente.addEventListener("click", () => {
         .getElementById("btnBuscarCliente")
         .addEventListener("click", async () => {
 
-        dni = document.getElementById("inputDni").value;
+            dni = document.getElementById("inputDni").value;
 
             await buscarCliente(dni);
-            if (clienteId != null){
+            if (clienteId != null) {
                 document.getElementById("resultadoCliente").innerHTML = `
                 <hr>
 
@@ -344,7 +349,7 @@ btnVerCliente.addEventListener("click", () => {
 
                 <p>
                     <strong>TOTAL:</strong> 
-                    ${total}
+                    $${total}
                 </p>
 
                 <button 
@@ -353,28 +358,28 @@ btnVerCliente.addEventListener("click", () => {
                     Aceptar
                 </button>
             `;
-            const btnAceptarPedido = document.getElementById("btnAceptarPedido");
+                const btnAceptarPedido = document.getElementById("btnAceptarPedido");
 
-            btnAceptarPedido.addEventListener("click", async () => {
+                btnAceptarPedido.addEventListener("click", async () => {
 
-                const nuevoPedido = {
-                    clienteId,
-                    clienteNombre,
-                    clienteEmail,
-                    fechaPedido,
-                    estadoPedido,
-                    formaPago,
-                    domicilioEnvio: calle + " " + numCalle,
-                    total,
-                    motivoCancelacion,
-                    detalles
-                };
+                    const nuevoPedido = {
+                        clienteId,
+                        clienteNombre,
+                        clienteEmail,
+                        fechaPedido,
+                        estadoPedido,
+                        formaPago,
+                        domicilioEnvio: calle + " " + numCalle,
+                        total,
+                        motivoCancelacion,
+                        detalles
+                    };
 
-                console.log(nuevoPedido);
+                    console.log(nuevoPedido);
 
-                await guardarPedido(nuevoPedido);
+                    await guardarPedido(nuevoPedido);
 
-            });
+                });
             }
         });
 
@@ -382,7 +387,7 @@ btnVerCliente.addEventListener("click", () => {
     modalElemento.addEventListener("hidden.bs.modal", () => {
         modalElemento.remove();
     });
-    async function buscarCliente(dni){
+    async function buscarCliente(dni) {
         try {
             const response = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
 
@@ -396,9 +401,13 @@ btnVerCliente.addEventListener("click", () => {
             const cliente = clientes.find(c => String(c.dni) === String(dni));
 
             if (!cliente) {
-                
+
                 console.log("Usuario no registrado");
-                alertaModal("Usuario no Registrado");
+                Swal.fire({
+                    icon: "error",
+                    title: "Usuario no Registrado"
+                });
+                //alertaModal("Usuario no Registrado");
                 document.getElementById("inputDni").value = "";
                 return;
             }
@@ -415,7 +424,7 @@ btnVerCliente.addEventListener("click", () => {
         }
     }
 
-    async function guardarPedido(nuevoPedido){
+    async function guardarPedido(nuevoPedido) {
         const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
             method: "POST",
             headers: {
@@ -425,15 +434,23 @@ btnVerCliente.addEventListener("click", () => {
         });
 
         // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
-        if (resp.ok) { 
+        if (resp.ok) {
 
             await actualizarStockProductos(detalles);
             modal.hide();
 
-            alertaModal("Pedido registrado exitosamente");
+            Swal.fire({
+                icon: "success",
+                title: "Pedido registrado",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            //alertaModal("Pedido registrado exitosamente");
 
             localStorage.removeItem("carrito");
-
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
         } else {
             console.log("Error al guardar el pedido");
         }
@@ -486,72 +503,6 @@ btnVerCliente.addEventListener("click", () => {
         }
     }
 
-    function alertaModal(texto){
-    const modalExistente = document.getElementById("Alerta");
-    if (modalExistente) {
-        modalExistente.remove();
-    }
-    const modalHTML = `
-        <div class="modal fade" id="Alerta" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            ALERTA
-                        </h5>
-
-                        <button 
-                            type="button" 
-                            class="btn-close" 
-                            data-bs-dismiss="modal">
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <p>${texto}</p>
-
-                        <button 
-                            class="btn btn-primary w-100"
-                            data-bs-dismiss="modal"
-                            id="aceptarMensaje">
-                            ACEPTAR
-                        </button>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Insertar modal
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
-
-    // Obtener modal
-    const modalElemento = document.getElementById("Alerta");
-
-    // Crear instancia bootstrap
-    const modal = new bootstrap.Modal(modalElemento);
-
-    // Mostrar
-    modal.show();
-
-    if (texto === "Pedido registrado exitosamente"){
-        document
-    .getElementById("aceptarMensaje")
-    .addEventListener("click", () => {
-
-        location.reload();
-
-    });}
-
-    // Eliminar del DOM al cerrar
-    modalElemento.addEventListener("hidden.bs.modal", () => {
-        modalElemento.remove();
-    });
-        }
 });
 
 //FIN GUARDADO DE PEDIDO
