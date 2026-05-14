@@ -168,6 +168,15 @@
     background-color: #ae8ae563;
 }
 
+#btnAceptarPedido {
+    background-color: #84bd95;
+    color: white;
+    border: none;
+}
+
+#btnAceptarPedido:hover {
+    background-color: #71a380;
+}
 .btn-eliminar {
     background-color: #e17171;
     color: white;

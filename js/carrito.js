@@ -389,7 +389,7 @@ btnVerCliente.addEventListener("click", () => {
 
                 <p>
                     <strong>TOTAL:</strong> 
-                    ${total}
+                    $${total}
                 </p>
 
                 <button 
@@ -460,7 +460,11 @@ btnVerCliente.addEventListener("click", () => {
             if (!cliente) {
 
                 console.log("Usuario no registrado");
-                alertaModal("Usuario no Registrado");
+                Swal.fire({
+                    icon: "error",
+                    title: "Usuario no Registrado"
+                });
+                //alertaModal("Usuario no Registrado");
                 document.getElementById("inputDni").value = "";
                 return;
             }
@@ -493,10 +497,18 @@ btnVerCliente.addEventListener("click", () => {
             await actualizarStockProductos(detalles);
             modal.hide();
 
-            alertaModal("Pedido registrado exitosamente");
+            Swal.fire({
+                icon: "success",
+                title: "Pedido registrado",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            //alertaModal("Pedido registrado exitosamente");
 
             localStorage.removeItem("carrito");
-
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
         } else {
             console.log("Error al guardar el pedido");
         }
