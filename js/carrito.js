@@ -429,6 +429,8 @@ btnVerCliente.addEventListener("click", () => {
 
         // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
         if (resp.ok) { 
+
+            await actualizarStockProductos(detalles);
             modal.hide();
 
             alertaModal("Pedido registrado exitosamente");
@@ -439,6 +441,54 @@ btnVerCliente.addEventListener("click", () => {
             console.log("Error al guardar el pedido");
         }
     }
+
+    async function actualizarStockProductos(detalles) {
+
+        for (const item of detalles) {
+
+            try {
+
+                // Obtener producto actual
+                const response = await fetch(
+                    `https://69e616eace4e908a155ef130.mockapi.io/producto/${item.productoId}`
+                );
+
+                if (!response.ok) {
+                    console.log("Error al obtener producto");
+                    continue;
+                }
+                const producto = await response.json();
+
+                // Calcular nuevo stock
+                const nuevoStock = producto.stock - item.cantidad;
+
+                if (nuevoStock < 0) {
+                    console.log("Stock insuficiente");
+                    continue;
+                }
+                // Actualizar stock
+                const updateResponse = await fetch(
+                    `https://69e616eace4e908a155ef130.mockapi.io/producto/${item.productoId}`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            stock: nuevoStock
+                        })
+                    }
+                );
+                if (!updateResponse.ok) {
+                    console.log("Error al actualizar producto");
+                }
+
+            } catch (error) {
+                console.log("Error al actualizar stock:", error);
+            }
+        }
+    }
+
     function alertaModal(texto){
     const modalExistente = document.getElementById("Alerta");
     if (modalExistente) {
