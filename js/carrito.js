@@ -191,166 +191,7 @@ async function iniciar() {
 }
 
 
-/*
-// CONFIRMAR PEDIDO
-const btnConfirmarPedido = document.getElementById("btn-confirmar-pedido");
-btnConfirmarPedido.addEventListener("click", confirmarPedido);
-
-async function confirmarPedido() {
-    const carrito = obtenerCarrito();
-    console.log(carrito);
-
-    // ATRIBUTOS DEL OBJETO
-    //calcula el total
-    let clienteId;
-    let clienteNombre;
-    let clienteEmail;
-    const fechaPedido = new Date();
-    let domicilioEnvio;
-    const estadoPedido = "Pendiente";
-    const formaPago = "EFECTIVO CONTRA ENTREGA ";
-    let total = 0;
-    carrito.forEach((item) => {
-        total += item.subtotal;
-    });
-    const motivoCancelacion = "";
-    const detalles = carrito;
-
-    // solicitar un dni para cargar datos de envio
-    const dni = prompt("Ingrese su DNI:");
-
-    try {
-        const response = await fetch("https://69e616eace4e908a155ef130.mockapi.io/usuario");
-
-        if (!response.ok) {
-            throw new Error("Error al obtener clientes");
-        }
-
-        const clientes = await response.json();
-
-        // Buscar cliente por DNI
-        const cliente = clientes.find(c => c.dni === dni);
-
-        if (!cliente) {
-            alert("Usuario no Registrado")
-            console.log("Usuario no registrado");
-            return;
-        }
-
-        // Guardar datos del cliente
-        clienteId = cliente.id;
-        clienteNombre = cliente.nombre;
-        clienteEmail = cliente.email;
-        domicilioEnvio = cliente.calle + " " + cliente.numero;
-
-    } catch (error) {
-        console.error("Error:", error.message);
-    }
-    //}
-
-    // crear el objeto para guardar en la api
-    const nuevoPedido = {
-        clienteId,
-        clienteNombre,
-        clienteEmail,
-        fechaPedido,
-        estadoPedido,
-        formaPago,
-        domicilioEnvio,
-        total,
-        motivoCancelacion,
-        detalles
-    };
-
-    // guardar el pedido en la api
-    const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(nuevoPedido)
-    });
-
-    // si guarda correctamente borra el contenido del carrito y recarga la pagina, en caso de falla no borra nada, y da un mensaje por consola
-    if (resp.ok) {
-        alert("Pediro registrado exitosamente")
-        localStorage.removeItem("carrito");
-        location.reload();
-
-    } else {
-        console.log("Error al guardar el pedido");
-    }
-
-}
-
-// HASTA ACA LA CONFIRMACION
-
-
-
-const btnVerCliente = document.getElementById("btn-confirmar-pedido");
-
-btnVerCliente.addEventListener("click", () => {
-    const cliente = {
-        nombre: "Juan Perez",
-        email: "juan@gmail.com",
-        dni: "40111222"
-    };
-
-    // Crear el modal dinámicamente
-    const modalHTML = `
-        <div class="modal fade" id="modalCliente" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">Datos del Cliente</h5>
-
-                        <button 
-                            type="button" 
-                            class="btn-close" 
-                            data-bs-dismiss="modal">
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p><strong>Nombre:</strong> ${cliente.nombre}</p>
-                        <p><strong>Email:</strong> ${cliente.email}</p>
-                        <p><strong>DNI:</strong> ${cliente.dni}</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button 
-                            type="button"
-                            class="btn btn-success"
-                            data-bs-dismiss="modal">
-                            Aceptar
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Insertar el modal en el body
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
-
-    // Obtener el modal
-    const modalElemento = document.getElementById("modalCliente");
-
-    // Crear instancia Bootstrap
-    const modal = new bootstrap.Modal(modalElemento);
-
-    // Mostrar modal
-    modal.show();
-
-    // Eliminar modal del DOM al cerrarse
-    modalElemento.addEventListener("hidden.bs.modal", () => {
-        modalElemento.remove();
-    });
-
-});
-*/
+// GUARDADO DE PEDIDO
 
 const btnVerCliente = document.getElementById("btn-confirmar-pedido");
 
@@ -576,7 +417,6 @@ btnVerCliente.addEventListener("click", () => {
             console.error("Error:", error.message);
         }
     }
-//asdasd
 
     async function guardarPedido(nuevoPedido){
         const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
@@ -667,5 +507,6 @@ btnVerCliente.addEventListener("click", () => {
         }
 });
 
+//FIN GUARDADO DE PEDIDO
 
 renderizarCarrito();
