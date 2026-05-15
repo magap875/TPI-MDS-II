@@ -202,6 +202,7 @@ btnVerCliente.addEventListener("click", () => {
     //calcula el total
     let clienteId;
     let clienteNombre;
+    let clienteApellido;
     let clienteDirecciones = [];
     let clienteEmail;
     const fechaPedido = new Date();
@@ -217,30 +218,56 @@ btnVerCliente.addEventListener("click", () => {
     const motivoCancelacion = "";
     const detalles = carrito;
     const detallesHTML = detalles.map(item => `
-        <div class="border rounded p-2 mb-2">
 
-            <p>
-                <strong>Producto:</strong> 
-                ${item.nombreProducto}
-            </p>
+    <div class="border rounded p-3 mb-2 shadow-sm bg-white">
 
-            <p>
-                <strong>Cantidad:</strong> 
-                ${item.cantidad}
-            </p>
+        <div class="d-flex justify-content-between align-items-start mb-3">
 
-            <p>
-                <strong>Precio Unitario:</strong> 
-                $${item.precioUnitario}
-            </p>
+            <div>
+                <h6 class="mb-1 fw-bold">
+                    ${item.nombreProducto}
+                </h6>
+            </div>
 
-            <p>
-                <strong>Subtotal:</strong> 
-                $${item.subtotal}
-            </p>
+            <div class="text-end">
+                <small class="text-muted d-block">
+                    Cantidad
+                </small>
+
+                <span class="fw-semibold">
+                    x${item.cantidad}
+                </span>
+            </div>
 
         </div>
-    `).join("");
+
+        <div class="d-flex justify-content-between align-items-center border-top pt-2">
+
+            <div>
+                <small class="text-muted d-block">
+                    Precio Unitario
+                </small>
+
+                <span class="fw-semibold">
+                    $${item.precioUnitario}
+                </span>
+            </div>
+
+            <div class="text-end">
+                <small class="text-muted d-block">
+                    Subtotal
+                </small>
+
+                <span class="fw-bold fs-7">
+                    $${item.subtotal}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+`).join("");
     // Crear modal
     const modalHTML = `
         <div class="modal fade" id="modalCliente" tabindex="-1">
@@ -249,7 +276,7 @@ btnVerCliente.addEventListener("click", () => {
 
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            Buscar Cliente
+                            Buscar cliente
                         </h5>
 
                         <button 
@@ -262,14 +289,14 @@ btnVerCliente.addEventListener("click", () => {
                     <div class="modal-body">
 
                         <label class="form-label">
-                            Ingrese DNI
+                            Ingrese su DNI
                         </label>
 
                         <input 
                             type="text"
                             class="form-control mb-3"
                             id="inputDni"
-                            placeholder="Ej: 40111222"
+                            placeholder="Ej: 46209670"
                         >
 
                         <button 
@@ -318,17 +345,11 @@ btnVerCliente.addEventListener("click", () => {
 
                     opcionesDirecciones =
                         direcciones.map(dir => `
-
                             <option value="${dir.id}">
-                                ${dir.calle}
-                                ${dir.numero}
-                                - ${dir.localidad}
-
-                                ${dir.predeterminada
-                                ? "(Predeterminada)"
-                                : ""
-                            }
-
+                            ${dir.calle} ${dir.numero}
+                            ${dir.piso ? ` Piso ${dir.piso}` : ""}
+                            ${dir.dpto ? ` Dpto ${dir.dpto}` : ""}
+                            - ${dir.localidad}, ${dir.provincia}
                             </option>
 
                         `).join("");
@@ -343,66 +364,90 @@ btnVerCliente.addEventListener("click", () => {
                 }
 
                 document.getElementById("resultadoCliente").innerHTML = `
-                <hr>
+                        <hr>
 
-                <p>
-                    <strong>ID Cliente:</strong> 
-                    ${clienteId}
-                </p>
+                        <div class="card border-0 shadow-sm p-3 factura-box">
 
-                <p>
-                    <strong>Nombre:</strong> 
-                    ${clienteNombre}
-                </p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h5 class="mb-0 fw-bold">Resumen del Pedido</h5>
+                                </div>
+                            </div>
 
-                <p>
-                    <strong>Email:</strong> 
-                    ${clienteEmail}
-                </p>
+                            <div class="border rounded p-3 mb-3 bg-light">
 
-                <label class="form-label mt-3">
-                    Dirección de envío
-                </label>
+                                <h6 class="fw-bold mb-3">
+                                    Datos del Cliente
+                                </h6>
 
-                <select
-                    class="form-select mb-3"
-                    id="selectDireccion">
-                    ${opcionesDirecciones}
-                </select>
+                                <p class="mb-1">
+                                    <strong>Nombre:</strong>
+                                    ${clienteNombre} ${clienteApellido}
+                                </p>
 
-                <button
-                    class="btn btn-secondary w-100 mb-3"
-                    id="btnAgregarDireccion"
-                >
-                    Agregar dirección
-                </button>
-            
-                                <p>
-                    <strong>Forma de Pago:</strong> 
-                    ${formaPago}
-                </p>
-                <div>
-                    <strong>DETALLE DE PEDIDO</strong> 
-                
-                    ${detallesHTML}
-                </div>
+                                <p class="mb-1">
+                                    <strong>Email:</strong>
+                                    ${clienteEmail}
+                                </p>
 
-                <p>
-                    <strong>TOTAL:</strong> 
-                    $${total}
-                </p>
+                                <label class="form-label fw-semibold mt-3">
+                                    Dirección de envío
+                                </label>
 
-                <button 
-                    class="btn btn-success w-100"
-                    id="btnAceptarPedido">
-                    Aceptar
-                </button>
-            `;
+                                <select
+                                    class="form-select mb-2"
+                                    id="selectDireccion">
+                                    ${opcionesDirecciones}
+                                </select>
+
+                                <button
+                                    class="btn btn-outline-dark w-100"
+                                    id="btnAgregarDireccion">
+                                    + Agregar dirección
+                                </button>
+
+                            </div>
+
+                            <div class="border rounded p-3 mb-3">
+
+                                <h6 class="fw-bold mb-3">
+                                    Productos
+                                </h6>
+
+                                ${detallesHTML}
+
+                            </div>
+
+                            <div class="border-top pt-3">
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Forma de pago</span>
+                                    <strong>${formaPago}</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Total</h5>
+
+                                    <h4 class="mb-0 text-success fw-bold">
+                                        $${total}
+                                    </h4>
+                                </div>
+
+                            </div>
+
+                            <button 
+                                class="btn btn-success w-100 mt-4 py-2"
+                                id="btnAceptarPedido">
+                                Confirmar pedido
+                            </button>
+
+                        </div>
+                        `;
                 document
                     .getElementById("btnAgregarDireccion")
                     .addEventListener("click", () => {
 
-                        mostrarModalDireccion(clienteId);
+                        mostrarModalDireccion(clienteId, clienteDirecciones);
                     });
 
                 const btnAceptarPedido = document.getElementById("btnAceptarPedido");
@@ -419,14 +464,17 @@ btnVerCliente.addEventListener("click", () => {
                     const nuevoPedido = {
                         clienteId,
                         clienteNombre,
+                        clienteApellido,
                         clienteEmail,
                         fechaPedido,
                         estadoPedido,
                         formaPago,
-                        domicilioEnvio:
-                            `${direccionSeleccionada.calle}
-                            ${direccionSeleccionada.numero}
-                            - ${direccionSeleccionada.localidad}`,
+                        domicilioEnvio: `
+                        ${direccionSeleccionada.calle} ${direccionSeleccionada.numero}
+                        ${direccionSeleccionada.piso ? ` Piso ${direccionSeleccionada.piso}` : ""}
+                        ${direccionSeleccionada.dpto ? ` Dpto ${direccionSeleccionada.dpto}` : ""}
+                        - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}
+                    `.replace(/\s+/g, " ").trim(),
                         total,
                         motivoCancelacion,
                         detalles
@@ -472,6 +520,7 @@ btnVerCliente.addEventListener("click", () => {
             // Guardar datos del cliente
             clienteId = cliente.id;
             clienteNombre = cliente.nombre;
+            clienteApellido = cliente.apellido;
             clienteEmail = cliente.email;
 
             clienteDirecciones =
@@ -656,7 +705,7 @@ async function registrarDireccion(
 
     // AGREGAR
     direccion.id = crypto.randomUUID();
-    
+
     cliente.direcciones.push(direccion);
 
     // ACTUALIZAR USUARIO
@@ -690,7 +739,8 @@ async function registrarDireccion(
 }
 
 function mostrarModalDireccion(
-    clienteId
+    clienteId,
+    clienteDirecciones
 ) {
 
     const modalHTML = `
@@ -765,7 +815,7 @@ function mostrarModalDireccion(
 
                     <input
                         type="text"
-                        id="departamento"
+                        id="dpto"
                         class="form-control mb-2"
                         placeholder="Departamento"
                     >
@@ -843,9 +893,9 @@ function mostrarModalDireccion(
                             "piso"
                         ).value,
 
-                    departamento:
+                    dpto:
                         document.getElementById(
-                            "departamento"
+                            "dpto"
                         ).value,
 
                     predeterminada: false
@@ -857,15 +907,27 @@ function mostrarModalDireccion(
                         direccion
                     );
 
+                clienteDirecciones.push(direccion);
+
                 if (direccionGuardada) {
+
+                    const selectDireccion =
+                        document.getElementById("selectDireccion");
+
+                    selectDireccion.innerHTML += `
+                        <option selected>
+                            ${direccion.calle} ${direccion.numero}
+                            ${direccion.piso ? ` Piso ${direccion.piso}` : ""}
+                            ${direccion.dpto ? ` Dpto ${direccion.dpto}` : ""}
+                            - ${direccion.localidad}, ${direccion.provincia}
+                        </option>
+                    `;
 
                     modal.hide();
 
                     alertaModal(
                         "Dirección registrada correctamente"
                     );
-
-                    location.reload();
                 }
             }
         );

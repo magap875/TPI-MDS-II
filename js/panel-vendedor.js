@@ -14,13 +14,43 @@ async function obtenerPedidos() {
 }
 
 function renderProductos(detalles) {
+
     if (!detalles || detalles.length === 0) {
-        return "Sin productos";
+        return "<p>Sin productos</p>";
     }
 
-    return detalles
-        .map(item => `${item.cantidad}x ${item.nombreProducto}`)
-        .join(" - ");
+    return `
+        <div class="d-flex flex-column gap-2">
+            ${detalles.map(item => `
+
+                <div class="border rounded p-2">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <div class="fw-semibold">
+                                ${item.cantidad}x ${item.nombreProducto}
+                            </div>
+
+                            <small class="text-muted">
+                                Precio unitario: $${item.precioUnitario}
+                            </small>
+
+                        </div>
+
+                        <div class="fw-semibold">
+                        Subtotal:
+                            $${item.subtotal}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `).join("")}
+        </div>
+    `;
 }
 
 async function renderizarPedidos() {
@@ -123,9 +153,17 @@ async function renderizarPedidos() {
 
                     <div class="d-flex justify-content-between align-items-start">
 
+                        <div>
                         <h5 class="fw-bold">
-                            Cliente: ${pedido.clienteNombre}
+                            Cliente: ${pedido.clienteNombre} ${pedido.clienteApellido}
                         </h5>
+
+                        <p class="mb-1">
+                            <strong>Domicilio:</strong>
+                            ${pedido.domicilioEnvio}
+                        </p>
+                        <p>Email: ${pedido.clienteEmail} </p>
+                        </div>
 
                         <span class="badge ${colorBadge}">
                             Estado actual: ${pedido.estadoPedido}
@@ -140,32 +178,37 @@ async function renderizarPedidos() {
                         ${renderProductos(pedido.detalles)}
                     </p>
 
-                    <p class="mb-1">
-                        <strong>Domicilio:</strong>
-                        ${pedido.domicilioEnvio}
-                    </p>
-
-                    <p class="mb-3">
-                        <strong>Total:</strong>
-                        $${pedido.total}
-                    </p>
+                    <div class="d-flex justify-content-between align-items-end border-top pt-3 mt-3 flex-wrap gap-3">
 
                     <div class="d-flex gap-2 flex-wrap">
 
                         ${botonSiguiente}
 
-                        ${
-                            pedido.estadoPedido !== "Cancelado" &&
+                                    ${pedido.estadoPedido !== "Cancelado" &&
                             pedido.estadoPedido !== "Entregado"
-                                ? `
-                                    <button 
-                                        class="btn btn-outline-danger btn-cancelar"
-                                        data-id="${pedido.idPedido}">
-                                        Cancelar
-                                    </button>
-                                `
-                                : ""
+                            ? `
+                                                <button 
+                                                    class="btn btn-outline-danger btn-cancelar"
+                                                    data-id="${pedido.idPedido}">
+                                                    Cancelar
+                                                </button>
+                                            `
+                            : ""
                         }
+
+                    </div>
+
+                        <div class="text-end">
+
+                            <small class="text-muted d-block">
+                                Total del pedido
+                            </small>
+
+                            <span class="fw-bold fs-3 text-dark">
+                                $${pedido.total}
+                            </span>
+
+                        </div>
 
                     </div>
 
