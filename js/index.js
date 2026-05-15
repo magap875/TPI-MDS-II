@@ -91,6 +91,16 @@ function agregarAlCarrito(idProducto) {
         return;
     }
 
+    // VALIDAR STOCK 0
+    if (producto.stock <= 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "Sin stock",
+            text: "Este producto no tiene stock disponible"
+        });
+        return;
+    }
+
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
     const itemExistente = carrito.find(item => item.productoId == producto.id);

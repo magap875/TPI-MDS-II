@@ -298,3 +298,23 @@ footer p {
     border-radius: 0.7rem;
     padding: 0.7rem;
 }
+
+.form-confirmacion{
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.btn-direccion{
+    border: 1px solid black;
+    color: black;
+    background-color: transparent;
+}
+
+/* VENDEDOR */
+
+.nav-pedidos{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
