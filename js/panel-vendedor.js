@@ -185,16 +185,16 @@ async function renderizarPedidos() {
                         ${botonSiguiente}
 
                                     ${pedido.estadoPedido !== "Cancelado" &&
-                            pedido.estadoPedido !== "Entregado"
-                            ? `
+                pedido.estadoPedido !== "Entregado"
+                ? `
                                                 <button 
                                                     class="btn btn-outline-danger btn-cancelar"
                                                     data-id="${pedido.idPedido}">
                                                     Cancelar
                                                 </button>
                                             `
-                            : ""
-                        }
+                : ""
+            }
 
                     </div>
 
@@ -206,6 +206,10 @@ async function renderizarPedidos() {
 
                             <span class="fw-bold fs-3 text-dark">
                                 $${pedido.total}
+                            </span>
+
+                            <span class="text-success fw-bold d-block">
+                                 ${pedido.formaPago}
                             </span>
 
                         </div>

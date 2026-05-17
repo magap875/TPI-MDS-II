@@ -120,7 +120,6 @@ function agregarAlCarrito(idProducto) {
         carrito.push({
             productoId: producto.id,
             nombreProducto: producto.nombre,
-            tipoProducto: producto.tipoProducto || "SIMPLE",
             imagen: producto.url,
             cantidad: 1,
             precioUnitario: Number(producto.precio),
