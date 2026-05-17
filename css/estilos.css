@@ -283,6 +283,7 @@ footer p {
     margin-top: 2rem;
     font-size: 12px;
 }
+
 /* CARRITO*/
 .carrito-card {
     border-radius: 1rem;
@@ -311,8 +312,12 @@ footer p {
     background-color: transparent;
 }
 
-/* VENDEDOR */
+/* CONFIRMACIÓN DE PEDIDO */
+.modal-confirmacion{
+    max-width: 650px;
+}
 
+/* VENDEDOR */
 .nav-pedidos{
     display: flex;
     align-items: center;

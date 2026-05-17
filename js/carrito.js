@@ -275,7 +275,7 @@ btnVerCliente.addEventListener("click", () => {
     // Crear modal
     const modalHTML = `
         <div class="modal fade" id="modalCliente" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-confirmacion modal-dialog-centered">
                 <div class="modal-content">
 
                     <div class="modal-header">
@@ -300,11 +300,11 @@ btnVerCliente.addEventListener("click", () => {
                             type="text"
                             class="form-control mb-3"
                             id="inputDni"
-                            placeholder="Ej: 46209670"
+                            placeholder="Ej: 27294772"
                         >
 
                         <button 
-                            class="btn btn-primary w-100 btn-editar"
+                            class="btn w-100 btn-editar"
                             id="btnBuscarCliente">
                             Buscar
                         </button>
@@ -350,10 +350,7 @@ btnVerCliente.addEventListener("click", () => {
                     opcionesDirecciones =
                         direcciones.map(dir => `
                             <option value="${dir.id}">
-                            ${dir.calle} ${dir.numero}
-                            ${dir.piso ? ` Piso ${dir.piso}` : ""}
-                            ${dir.dpto ? ` Dpto ${dir.dpto}` : ""}
-                            - ${dir.localidad}, ${dir.provincia}
+                            ${dir.calle} ${dir.numero}${dir.piso ? `, Piso ${dir.piso}` : ""}${dir.dpto ? `, Dpto ${dir.dpto}` : ""} - ${dir.localidad}, ${dir.provincia}, ${dir.pais}
                             </option>
 
                         `).join("");
@@ -473,12 +470,7 @@ btnVerCliente.addEventListener("click", () => {
                         fechaPedido,
                         estadoPedido,
                         formaPago,
-                        domicilioEnvio: `
-                        ${direccionSeleccionada.calle} ${direccionSeleccionada.numero}
-                        ${direccionSeleccionada.piso ? ` Piso ${direccionSeleccionada.piso}` : ""}
-                        ${direccionSeleccionada.dpto ? ` Dpto ${direccionSeleccionada.dpto}` : ""}
-                        - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}
-                    `.replace(/\s+/g, " ").trim(),
+                        domicilioEnvio: `${direccionSeleccionada.calle} ${direccionSeleccionada.numero}${direccionSeleccionada.piso ? `, Piso ${direccionSeleccionada.piso}` : ""}${direccionSeleccionada.dpto ? `, Dpto ${direccionSeleccionada.dpto}` : ""} - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}, ${direccionSeleccionada.pais}`,
                         total,
                         motivoCancelacion,
                         detalles
@@ -791,7 +783,7 @@ function mostrarModalDireccion(
                 <div class="modal-header">
 
                     <h5 class="modal-title">
-                        Agregar Dirección
+                        Agregar dirección
                     </h5>
 
                     <button
@@ -854,10 +846,10 @@ function mostrarModalDireccion(
                     >
 
                     <button
-                        class="btn btn-success w-100"
+                        class="btn btn-editar w-100"
                         id="btnGuardarDireccion"
                     >
-                        Guardar Dirección
+                        Guardar dirección
                     </button>
 
                 </div>
@@ -996,12 +988,9 @@ function mostrarModalDireccion(
 
                 selectDireccion.innerHTML += `
                 <option selected>
-                    ${direccion.calle} ${direccion.numero}
-                    ${direccion.piso ? ` Piso ${direccion.piso}` : ""}
-                    ${direccion.dpto ? ` Dpto ${direccion.dpto}` : ""}
-                    - ${direccion.localidad}, ${direccion.provincia}
+                ${direccion.calle} ${direccion.numero}${direccion.piso ? `, Piso ${direccion.piso}` : ""}${direccion.dpto ? `, Dpto ${direccion.dpto}` : ""} - ${direccion.localidad}, ${direccion.provincia}, ${direccion.pais}
                 </option>
-            `;
+                `;
 
                 modal.hide();
 
