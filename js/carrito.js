@@ -195,7 +195,11 @@ btnVerCliente.addEventListener("click", () => {
     const carrito = obtenerCarrito();
     console.log(carrito);
     if (carrito.length === 0) {
-        alertaModal("El carrito está vacío");
+        Swal.fire({
+            icon: "error",
+            title: "Carrito vacío",
+            text: "El carrito está vacío"
+        });
         return;
     }
     // ATRIBUTOS DEL OBJETO
@@ -506,13 +510,10 @@ btnVerCliente.addEventListener("click", () => {
             const cliente = clientes.find(c => String(c.dni) === String(dni));
 
             if (!cliente) {
-
-                console.log("Usuario no registrado");
                 Swal.fire({
                     icon: "error",
                     title: "Usuario no Registrado"
                 });
-                //alertaModal("Usuario no Registrado");
                 document.getElementById("inputDni").value = "";
                 return;
             }
@@ -527,7 +528,11 @@ btnVerCliente.addEventListener("click", () => {
                 cliente.direcciones || [];
 
         } catch (error) {
-            console.error("Error:", error.message);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Error al obtener clientes"
+            });
         }
     }
 
@@ -552,14 +557,18 @@ btnVerCliente.addEventListener("click", () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            //alertaModal("Pedido registrado exitosamente");
+            
 
             localStorage.removeItem("carrito");
             setTimeout(() => {
                 location.reload();
             }, 2000);
         } else {
-            console.log("Error al guardar el pedido");
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Error al guardar el pedido"
+            });
         }
     }
 
@@ -575,7 +584,11 @@ btnVerCliente.addEventListener("click", () => {
                 );
 
                 if (!response.ok) {
-                    console.log("Error al obtener producto");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Error al obtener producto"
+                    });
                     continue;
                 }
                 const producto = await response.json();
@@ -584,7 +597,11 @@ btnVerCliente.addEventListener("click", () => {
                 const nuevoStock = producto.stock - item.cantidad;
 
                 if (nuevoStock < 0) {
-                    console.log("Stock insuficiente");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Stock insuficiente"
+                    });
                     continue;
                 }
                 // Actualizar stock
@@ -601,11 +618,19 @@ btnVerCliente.addEventListener("click", () => {
                     }
                 );
                 if (!updateResponse.ok) {
-                    console.log("Error al actualizar producto");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Error al actualizar producto"
+                    });
                 }
 
             } catch (error) {
-                console.log("Error al actualizar stock:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Error al actualizar stock"
+                });
             }
         }
     }
@@ -877,42 +902,74 @@ function mostrarModalDireccion(
             const letrasNumeros = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/;
 
             if (!pais || !provincia || !localidad || !calle || !numero) {
-                alertaModal("País, provincia, localidad, calle y número son obligatorios");
+                Swal.fire({
+                    icon: "error",
+                    title: "Campos incompletos",
+                    text: "País, provincia, localidad, calle y número son obligatorios"
+                });
                 return;
             }
 
             if (!soloLetras.test(pais)) {
-                alertaModal("El país solo puede contener letras");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "El país solo puede contener letras"
+                });
                 return;
             }
 
             if (!soloLetras.test(provincia)) {
-                alertaModal("La provincia solo puede contener letras");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "La provincia solo puede contener letras"
+                });
                 return;
             }
 
             if (!soloLetras.test(localidad)) {
-                alertaModal("La localidad solo puede contener letras");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "La localidad solo puede contener letras"
+                });
                 return;
             }
 
             if (!letrasNumeros.test(calle)) {
-                alertaModal("La calle solo puede contener letras y números");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "La calle solo puede contener letras y números"
+                });
                 return;
             }
 
             if (Number(numero) <= 0) {
-                alertaModal("El número debe ser mayor a 0");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "El número debe ser mayor a 0"
+                });
                 return;
             }
 
             if (piso && !letrasNumeros.test(piso)) {
-                alertaModal("El piso solo puede contener letras y números");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "El piso solo puede contener letras y números"
+                });
                 return;
             }
 
             if (dpto && !letrasNumeros.test(dpto)) {
-                alertaModal("El departamento solo puede contener letras y números");
+                Swal.fire({
+                    icon: "error",
+                    title: "Entrada inválida",
+                    text: "El departamento solo puede contener letras y números"
+                });
                 return;
             }
 
@@ -948,7 +1005,10 @@ function mostrarModalDireccion(
 
                 modal.hide();
 
-                alertaModal("Dirección registrada correctamente");
+                Swal.fire({
+                    icon: "success",
+                    title: "Dirección registrada correctamente"
+                });
             }
         });
 
@@ -961,79 +1021,3 @@ function mostrarModalDireccion(
     );
 }
 
-function alertaModal(texto) {
-
-    const modalExistente = document.getElementById("Alerta");
-
-    if (modalExistente) {
-        modalExistente.remove();
-    }
-
-    const modalHTML = `
-        <div class="modal fade" id="Alerta" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            ALERTA
-                        </h5>
-
-                        <button 
-                            type="button" 
-                            class="btn-close" 
-                            data-bs-dismiss="modal">
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <p>${texto}</p>
-
-                        <button 
-                            class="btn btn-primary w-100"
-                            data-bs-dismiss="modal"
-                            id="aceptarMensaje">
-                            ACEPTAR
-                        </button>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.insertAdjacentHTML(
-        "beforeend",
-        modalHTML
-    );
-
-    const modalElemento =
-        document.getElementById("Alerta");
-
-    const modal =
-        new bootstrap.Modal(modalElemento);
-
-    modal.show();
-
-    if (texto === "Pedido registrado exitosamente") {
-
-        document
-            .getElementById("aceptarMensaje")
-            .addEventListener("click", () => {
-
-                location.reload();
-
-            });
-    }
-
-    modalElemento.addEventListener(
-        "hidden.bs.modal",
-        () => {
-
-            modalElemento.remove();
-
-        }
-    );
-}
