@@ -666,7 +666,11 @@ async function registrarDireccion(
 
     if (error) {
 
-        alertaModal(error);
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error
+        });
         return;
     }
 
@@ -696,9 +700,11 @@ async function registrarDireccion(
 
     if (existe) {
 
-        alertaModal(
-            "La dirección ya existe"
-        );
+        Swal.fire({
+            icon: "warning",
+            title: "Dirección duplicada",
+            text: "Ya existe una dirección con los mismos datos"
+        });
 
         return;
     }
@@ -730,9 +736,11 @@ async function registrarDireccion(
 
     } else {
 
-        alertaModal(
-            "Error al registrar dirección"
-        );
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al registrar dirección"
+        });
 
         return false;
     }
@@ -854,83 +862,95 @@ function mostrarModalDireccion(
     modal.show();
 
     document
-        .getElementById(
-            "btnGuardarDireccion"
-        )
-        .addEventListener(
-            "click",
-            async () => {
+        .getElementById("btnGuardarDireccion")
+        .addEventListener("click", async () => {
 
-                const direccion = {
+            const pais = document.getElementById("pais").value.trim();
+            const provincia = document.getElementById("provincia").value.trim();
+            const localidad = document.getElementById("localidad").value.trim();
+            const calle = document.getElementById("calle").value.trim();
+            const numero = document.getElementById("numero").value.trim();
+            const piso = document.getElementById("piso").value.trim();
+            const dpto = document.getElementById("dpto").value.trim();
 
-                    pais:
-                        document.getElementById(
-                            "pais"
-                        ).value,
+            const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+            const letrasNumeros = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/;
 
-                    provincia:
-                        document.getElementById(
-                            "provincia"
-                        ).value,
-
-                    localidad:
-                        document.getElementById(
-                            "localidad"
-                        ).value,
-
-                    calle:
-                        document.getElementById(
-                            "calle"
-                        ).value,
-
-                    numero:
-                        document.getElementById(
-                            "numero"
-                        ).value,
-
-                    piso:
-                        document.getElementById(
-                            "piso"
-                        ).value,
-
-                    dpto:
-                        document.getElementById(
-                            "dpto"
-                        ).value,
-
-                    predeterminada: false
-                };
-
-                const direccionGuardada =
-                    await registrarDireccion(
-                        clienteId,
-                        direccion
-                    );
-
-                clienteDirecciones.push(direccion);
-
-                if (direccionGuardada) {
-
-                    const selectDireccion =
-                        document.getElementById("selectDireccion");
-
-                    selectDireccion.innerHTML += `
-                        <option selected>
-                            ${direccion.calle} ${direccion.numero}
-                            ${direccion.piso ? ` Piso ${direccion.piso}` : ""}
-                            ${direccion.dpto ? ` Dpto ${direccion.dpto}` : ""}
-                            - ${direccion.localidad}, ${direccion.provincia}
-                        </option>
-                    `;
-
-                    modal.hide();
-
-                    alertaModal(
-                        "Dirección registrada correctamente"
-                    );
-                }
+            if (!pais || !provincia || !localidad || !calle || !numero) {
+                alertaModal("País, provincia, localidad, calle y número son obligatorios");
+                return;
             }
-        );
+
+            if (!soloLetras.test(pais)) {
+                alertaModal("El país solo puede contener letras");
+                return;
+            }
+
+            if (!soloLetras.test(provincia)) {
+                alertaModal("La provincia solo puede contener letras");
+                return;
+            }
+
+            if (!soloLetras.test(localidad)) {
+                alertaModal("La localidad solo puede contener letras");
+                return;
+            }
+
+            if (!letrasNumeros.test(calle)) {
+                alertaModal("La calle solo puede contener letras y números");
+                return;
+            }
+
+            if (Number(numero) <= 0) {
+                alertaModal("El número debe ser mayor a 0");
+                return;
+            }
+
+            if (piso && !letrasNumeros.test(piso)) {
+                alertaModal("El piso solo puede contener letras y números");
+                return;
+            }
+
+            if (dpto && !letrasNumeros.test(dpto)) {
+                alertaModal("El departamento solo puede contener letras y números");
+                return;
+            }
+
+            const direccion = {
+                pais,
+                provincia,
+                localidad,
+                calle,
+                numero,
+                piso,
+                dpto,
+                predeterminada: false
+            };
+
+            const direccionGuardada =
+                await registrarDireccion(clienteId, direccion);
+
+            clienteDirecciones.push(direccion);
+
+            if (direccionGuardada) {
+
+                const selectDireccion =
+                    document.getElementById("selectDireccion");
+
+                selectDireccion.innerHTML += `
+                <option selected>
+                    ${direccion.calle} ${direccion.numero}
+                    ${direccion.piso ? ` Piso ${direccion.piso}` : ""}
+                    ${direccion.dpto ? ` Dpto ${direccion.dpto}` : ""}
+                    - ${direccion.localidad}, ${direccion.provincia}
+                </option>
+            `;
+
+                modal.hide();
+
+                alertaModal("Dirección registrada correctamente");
+            }
+        });
 
     modalElemento.addEventListener(
         "hidden.bs.modal",
