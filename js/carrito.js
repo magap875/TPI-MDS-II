@@ -337,6 +337,16 @@ btnVerCliente.addEventListener("click", () => {
 
             dni = document.getElementById("inputDni").value;
 
+            if (!/^\d+$/.test(dni)) {
+
+                Swal.fire(
+                    {   icon: "error",
+                        title: "Entrada inválida",
+                        text: "El DNI solo puede contener números"});
+
+                return;
+            }
+
             await buscarCliente(dni);
             if (clienteId != null) {
 
@@ -549,7 +559,7 @@ btnVerCliente.addEventListener("click", () => {
                 showConfirmButton: false,
                 timer: 1500
             });
-            
+
 
             localStorage.removeItem("carrito");
             setTimeout(() => {
