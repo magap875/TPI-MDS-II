@@ -68,12 +68,8 @@ async function renderizarPedidos() {
             pedido => pedido.estadoPedido === estadoSeleccionado
         );
     } else {
-        // Mostrar solo activos
-        pedidosFiltrados = pedidos.filter(
-            pedido =>
-                pedido.estadoPedido !== "Cancelado" &&
-                pedido.estadoPedido !== "Entregado"
-        );
+        // Mostrar todos
+        pedidosFiltrados = pedidos
     }
 
     // SI NO HAY PEDIDOS
@@ -189,7 +185,8 @@ async function renderizarPedidos() {
                 ? `
                                                 <button 
                                                     class="btn btn-outline-danger btn-cancelar"
-                                                    data-id="${pedido.idPedido}">
+                                                    data-id="${pedido.idPedido}"
+                                                    data-estado="${pedido.estadoPedido}">
                                                     Cancelar
                                                 </button>
                                             `
@@ -230,7 +227,7 @@ function activarEventosActualizar() {
     document.querySelectorAll(".btn-actualizar").forEach(btn => {
 
         btn.addEventListener("click", async () => {
-
+            
             const id = btn.dataset.id;
             const nuevoEstado = btn.dataset.nuevo;
 
@@ -255,8 +252,21 @@ function activarEventosCancelar() {
     document.querySelectorAll(".btn-cancelar").forEach(btn => {
 
         btn.addEventListener("click", async () => {
-
+        
             const id = btn.dataset.id;
+            const estado = btn.dataset.estado;
+
+            if (estado !== "Pendiente") {
+                
+                Swal.fire({
+                    title: "No permitido",
+                    text: "Solo se permite cancelar pedidos pendientes",
+                    icon: "warning"
+                });
+
+                return;
+            
+            }
 
             const { value: motivo } = await Swal.fire({
                 title: "Cancelar entrega",
