@@ -155,26 +155,67 @@ function actualizarContadorCarrito() {
 
 
 /* filtro en tiempo real */
-const inputFiltro = document.getElementById("filtro");
+// FILTRO BUSQUEDA PRODUCTOS
+function aplicarFiltros() {
+    const texto = document.getElementById("filtro-texto").value.trim().toLowerCase();
+    const marca = document.getElementById("filtro-marca").value.trim().toLowerCase();
+    const precioMinInput = document.getElementById("filtro-precio-min").value;
+    const precioMaxInput = document.getElementById("filtro-precio-max").value;
+    const precioMin = precioMinInput === "" ? null : Number(precioMinInput);
+    const precioMax = precioMaxInput === "" ? null : Number(precioMaxInput);
+    const orden = document.getElementById("ordenar").value;
+    let base = productosGlobal;
 
-if (inputFiltro) {
-    inputFiltro.addEventListener("input", () => {
-        const texto = inputFiltro.value.trim().toLowerCase();
+    if (orden === "inactivos") {
+        base = productosGlobal.filter(p => p.activo === false);
+    } else {
+        base = productosGlobal.filter(p => p.activo !== false);
+    }
 
-        const filtrados = productosGlobal.filter(p =>
-            p.activo !== false &&
-            p.nombre.toLowerCase().includes(texto)
+    let filtrados = base.filter(p => {
+        const coincideTexto = p.nombre.toLowerCase().includes(texto);
+
+        const coincideMarca =
+            !marca || p.marca.toLowerCase().includes(marca);
+
+        const coincidePrecioMin =
+            precioMin === null || p.precio >= precioMin;
+
+        const coincidePrecioMax =
+            precioMax === null || p.precio <= precioMax;
+
+        return (
+            coincideTexto &&
+            coincideMarca &&
+            coincidePrecioMin &&
+            coincidePrecioMax
         );
-
-        if (filtrados.length === 0) {
-            document.getElementById("cont-productos").innerHTML =
-                "<p class='text-center w-100 text-muted'>No se encontraron productos con ese nombre.</p>";
-            return;
-        }
-
-        mostrarProductos(filtrados);
     });
+
+    switch (orden) {
+        case "precio-asc":
+            filtrados.sort((a, b) => a.precio - b.precio);
+            break;
+
+        case "precio-desc":
+            filtrados.sort((a, b) => b.precio - a.precio);
+            break;
+    }
+
+    if (filtrados.length === 0) {
+        document.getElementById("contenedor-productos").innerHTML =
+            "<p class='text-center text-muted w-100'>No hay productos con esos filtros.</p>";
+        return;
+    }
+    mostrarProductos(filtrados);
 }
+
+document.querySelectorAll(
+    "#filtro-texto, #filtro-marca, #filtro-precio-min, #filtro-precio-max, #ordenar"
+).forEach(input => {
+    input.addEventListener("input", aplicarFiltros);
+    input.addEventListener("change", aplicarFiltros);
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     cargarYRenderizar();
