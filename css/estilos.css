@@ -177,6 +177,7 @@
 #btnAceptarPedido:hover {
     background-color: #71a380;
 }
+
 .btn-eliminar {
     background-color: #e17171;
     color: white;
@@ -252,14 +253,14 @@ main {
     width: 100%;
 }
 
-.btn-carrito{
+.btn-carrito {
     margin-top: 10px !important;
     background-color: black;
     font-size: .8rem !important;
     color: white;
 }
 
-.btn-carrito:hover{
+.btn-carrito:hover {
     transform: translateY(-3px);
     background-color: #212529;
     color: white;
@@ -300,26 +301,112 @@ footer p {
     padding: 0.7rem;
 }
 
-.form-confirmacion{
+.form-confirmacion {
     display: flex;
     gap: 20px;
     justify-content: flex-start;
 }
 
-.btn-direccion{
+.btn-direccion {
     border: 1px solid black;
     color: black;
     background-color: transparent;
 }
 
 /* CONFIRMACIÓN DE PEDIDO */
-.modal-confirmacion{
+.modal-confirmacion {
     max-width: 650px;
 }
 
 /* VENDEDOR */
-.nav-pedidos{
+.nav-pedidos {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+
+/* FILTROS ADMIN */
+.filtros-container {
+    background: #fff;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.filtro-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.rango-box {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.rango-titulo {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.8rem;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filtros-container input,
+.filtros-container select {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    min-height: 46px;
+}
+
+.filtros-container input:focus,
+.filtros-container select:focus {
+    border-color: #c084fc;
+    box-shadow: 0 0 0 0.2rem rgba(192, 132, 252, 0.2);
+}
+
+/* STOCK MINIMO */
+.badge {
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.stock-ok {
+    background: #e8f8ee;
+    color: #198754;
+}
+
+.stock-alerta {
+    background: #ffe5e7;
+    color: #d66b75;
+}
+
+.stock-min-badge {
+    background: #f1f1f1;
+    color: #555;
+}
+
+/* REACTIVAR PRODUCTOS */
+.btn-reactivar {
+    background: #198754;
+    color: white;
+    border: none;
+}
+
+.btn-reactivar:hover {
+    background: #4a9d76;
+}
+

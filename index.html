@@ -47,7 +47,55 @@
 
         <div id="vista-productos">
             <h2 class="tit">Productos disponibles</h2>
-            <input type="text" id="filtro" class="form-control mb-4" placeholder="¿Qué estás buscando?">
+            <div class="filtros-container mb-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-8">
+                        <div class="filtro-group">
+                            <label class="filtro-label">Buscar producto por nombre</label>
+                            <input id="filtro-texto" class="form-control" placeholder="Ej: Pintura..." />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="filtro-group">
+                            <label class="filtro-label">Buscar producto por marca</label>
+                            <input id="filtro-marca" class="form-control" placeholder="Ej: SkinPro..." />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <div class="rango-box">
+                            <div class="rango-titulo">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                                Filtrar por rango de precio
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input id="filtro-precio-min" min="1" type="number" class="form-control"
+                                        placeholder="Precio mínimo" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="filtro-precio-max" min="1" type="number" class="form-control"
+                                        placeholder="Precio máximo" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="filtro-group">
+                            <label class="filtro-label">Ordenar por...</label>
+                            <select id="ordenar" class="form-select">
+                                <option value="none">Seleccionar</option>
+                                <option value="precio-asc">Más baratos primero</option>
+                                <option value="precio-desc">Más caros primero</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="cont-productos" class="row g-3"></div>
         </div>
 
