@@ -279,7 +279,7 @@ btnVerCliente.addEventListener("click", () => {
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h5 class="modal-title">
+                        <h5 class="modal-title" id="tituloModal">
                             Buscar cliente
                         </h5>
 
@@ -290,7 +290,7 @@ btnVerCliente.addEventListener("click", () => {
                         </button>
                     </div>
 
-                    <div class="modal-body">
+                    <div class="modal-body" id="resultadoCliente">
 
                         <label class="form-label">
                             Ingrese su DNI
@@ -302,14 +302,19 @@ btnVerCliente.addEventListener("click", () => {
                             id="inputDni"
                             placeholder="Ej: 27294772"
                         >
-
+                        <input
+                            type="password"
+                            class="form-control mb-3"
+                            id="inputPassword"
+                            placeholder="Ingrese su contraseña"
+                        >
                         <button 
                             class="btn w-100 btn-editar"
                             id="btnBuscarCliente">
                             Buscar
                         </button>
 
-                        <div id="resultadoCliente" class="mt-4"></div>
+                        
 
                     </div>
 
@@ -340,9 +345,11 @@ btnVerCliente.addEventListener("click", () => {
             if (!/^\d+$/.test(dni)) {
 
                 Swal.fire(
-                    {   icon: "error",
+                    {
+                        icon: "error",
                         title: "Entrada inválida",
-                        text: "El DNI solo puede contener números"});
+                        text: "El DNI solo puede contener números"
+                    });
 
                 return;
             }
@@ -374,6 +381,7 @@ btnVerCliente.addEventListener("click", () => {
                         `;
                 }
 
+                document.getElementById("tituloModal").innerText = `PEDIDO`
                 document.getElementById("resultadoCliente").innerHTML = `
                         <hr>
 
@@ -381,7 +389,7 @@ btnVerCliente.addEventListener("click", () => {
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div>
-                                    <h5 class="mb-0 fw-bold">Resumen del Pedido</h5>
+                                    <h5 class="mb-0 fw-bold">Detalle de Pedido</h5>
                                 </div>
                             </div>
 
@@ -517,15 +525,35 @@ btnVerCliente.addEventListener("click", () => {
                     title: "Usuario no Registrado"
                 });
                 document.getElementById("inputDni").value = "";
+                document.getElementById("inputPassword").value = "";
                 return;
             }
+            // control de password
+            const passwordIngresada =
+                document.getElementById("inputPassword").value;
+
+            if (passwordIngresada !== cliente.password) {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Contraseña incorrecta"
+                });
+                document.getElementById("inputPassword").value = "";
+                return;
+            }
+
+            Swal.fire({
+                icon: "success",
+                title: "Validación Correcta",
+                showConfirmButton: false,
+                timer: 1500
+            });
 
             // Guardar datos del cliente
             clienteId = cliente.id;
             clienteNombre = cliente.nombre;
             clienteApellido = cliente.apellido;
             clienteEmail = cliente.email;
-
             clienteDirecciones =
                 cliente.direcciones || [];
 
