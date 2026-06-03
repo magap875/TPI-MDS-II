@@ -6,6 +6,7 @@ form.addEventListener("submit", async (e) => {
     const nombre = document.getElementsByName("nombre")[0].value;
     const apellido = document.getElementsByName("apellido")[0].value;
     const email = document.getElementsByName("email")[0].value;
+    const password = document.getElementsByName("pass")[0].value;
     const dni = document.getElementsByName("dni")[0].value;
     const telefono = document.getElementsByName("telefono")[0].value;
     const pais = document.getElementsByName("pais")[0].value;
@@ -22,6 +23,7 @@ form.addEventListener("submit", async (e) => {
         apellido,
         dni,
         email,
+        password,
         telefono,
         rol,
 
