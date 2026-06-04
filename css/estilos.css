@@ -410,3 +410,16 @@ footer p {
     background: #4a9d76;
 }
 
+/* Reportes de productos mas vendidos */
+.ver-reportes{
+    color: #212529;
+    font-size: 1rem;
+    line-height: 1;
+    margin-right: 1rem;
+    text-decoration: none;
+}
+
+.ver-reportes:hover {
+    color: #212529;
+    text-decoration: underline;
+}

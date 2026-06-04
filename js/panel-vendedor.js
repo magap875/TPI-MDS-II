@@ -332,6 +332,224 @@ async function ejecutarActualizacion(id, datos) {
     }
 }
 
+// productos mas vendidos
+document
+    .querySelector(".ver-reportes")
+    .addEventListener("click", (e) => {
+
+        e.preventDefault();
+
+        mostrarModalReportes();
+    });
+
+function mostrarModalReportes() {
+
+    const modalHTML = `
+        <div class="modal fade" id="modalReportes" tabindex="3">
+
+            <div class="modal-dialog modal-lg">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Productos Más Vendidos
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <label>Mes</label>
+
+                                <select
+                                    class="form-select"
+                                    id="mesReporte">
+
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Año</label>
+
+                                <select
+                                    class="form-select"
+                                    id="anioReporte">
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="btn mt-3"
+                            id="btnGenerarReporte"
+                            style="background-color: #c084fc; color: white; width: 100%;">
+
+                            Generar Reporte
+
+                        </button>
+
+                        <div
+                            id="resultadoReporte"
+                            class="mt-4">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        modalHTML
+    );
+
+    const modalElemento =
+        document.getElementById(
+            "modalReportes"
+        );
+
+    const modal =
+        new bootstrap.Modal(
+            modalElemento
+        );
+
+    modal.show();
+    document
+        .getElementById("btnGenerarReporte")
+        .addEventListener("click", generarReporte);
+
+}    
+
+
+async function generarReporte() {
+
+    const mes = Number(
+        document.getElementById("mesReporte").value
+    );
+
+    const anio = Number(
+        document.getElementById("anioReporte").value
+    );
+
+    const respuesta = await fetch(
+        "https://69fbceecfce564e25916ed52.mockapi.io/pedido"
+    );
+
+    const pedidos = await respuesta.json();
+
+    const pedidosFiltrados = pedidos.filter(pedido => {
+
+        const fecha = new Date(pedido.fechaPedido);
+
+        return (
+            fecha.getMonth() + 1 === mes &&
+            fecha.getFullYear() === anio
+        );
+    });
+
+    calcularRanking(pedidosFiltrados);
+}
+
+function calcularRanking(pedidos) {
+
+    const ventas = {};
+
+    pedidos.forEach(pedido => {
+
+        pedido.detalles.forEach(detalle => {
+
+            const nombre = detalle.nombreProducto;
+
+            if (!ventas[nombre]) {
+                ventas[nombre] = 0;
+            }
+
+            ventas[nombre] += detalle.cantidad;
+        });
+    });
+
+    const ranking = Object.entries(ventas)
+        .sort((a, b) => b[1] - a[1]);
+
+    mostrarRanking(ranking);
+}
+
+function mostrarRanking(ranking) {
+
+    const resultado =
+        document.getElementById(
+            "resultadoReporte"
+        );
+
+    if (ranking.length === 0) {
+
+        resultado.innerHTML = `
+            <p class="text-muted text-center">
+                No existen ventas en el periodo seleccionado
+            </p>
+        `;
+
+        return;
+    }
+
+    resultado.innerHTML = `
+        <table class="table table-striped">
+
+            <thead>
+
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad Vendida</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                ${ranking.map(item => `
+                    <tr>
+                        <td>${item[0]}</td>
+                        <td>${item[1]}</td>
+                    </tr>
+                `).join("")}
+
+            </tbody>
+
+        </table>
+    `;
+}
+
 // EVENTO FILTRO
 filtroEstado.addEventListener("change", renderizarPedidos);
 
