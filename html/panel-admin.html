@@ -102,64 +102,74 @@
                     </div>
                 </div>
                 <hr>
-                <div class="container mt-4">
-                    <h3 class="mb-3">Productos cargados</h3>
 
-                    <div class="filtros-container mb-4">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-8">
-                                <div class="filtro-group">
-                                    <label class="filtro-label">Buscar producto por nombre</label>
-                                    <input id="filtro-texto" class="form-control" placeholder="Ej: Pintura..." />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="filtro-group">
-                                    <label class="filtro-label">Buscar producto por marca</label>
-                                    <input id="filtro-marca" class="form-control" placeholder="Ej: SkinPro..." />
-                                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">Productos cargados</h3>
+
+                    <button id="btn-reporte-stock" class="btn btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#modalReporteStock">
+                        Reporte de stock
+                    </button>
+                </div>
+
+                <div class="filtros-container mb-4">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <div class="filtro-group">
+                                <label class="filtro-label">Buscar producto por nombre</label>
+                                <input id="filtro-texto" class="form-control" placeholder="Ej: Pintura..." />
                             </div>
                         </div>
 
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-8">
-                                <div class="rango-box">
-                                    <div class="rango-titulo">
-                                        <i class="fa-solid fa-dollar-sign"></i>
-                                        Filtrar por rango de precio
-                                    </div>
-                                    <div class="row g-2">
-                                        <div class="col-md-6">
-                                            <input id="filtro-precio-min" min="1" type="number" class="form-control"
-                                                placeholder="Precio mínimo" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input id="filtro-precio-max" min="1" type="number" class="form-control"
-                                                placeholder="Precio máximo" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="filtro-group">
-                                    <label class="filtro-label">Ordenar por...</label>
-                                    <select id="ordenar" class="form-select">
-                                        <option value="none">Ver todos</option>
-                                        <option value="precio-asc">Más baratos</option>
-                                        <option value="precio-desc">Más caros</option>
-                                        <option value="stock-asc">Menor stock</option>
-                                        <option value="stock-desc">Mayor stock</option>
-                                        <option value="stock-bajo">Stock bajo</option>
-                                        <option value="inactivos">Dados de baja</option>
-                                    </select>
-                                </div>
+                        <div class="col-md-4">
+                            <div class="filtro-group">
+                                <label class="filtro-label">Buscar producto por marca</label>
+                                <input id="filtro-marca" class="form-control" placeholder="Ej: SkinPro..." />
                             </div>
                         </div>
                     </div>
 
-                    <div id="contenedor-productos" class="row g-4"></div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <div class="rango-box">
+                                <div class="rango-titulo">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                    Filtrar por rango de precio
+                                </div>
+
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <input id="filtro-precio-min" min="1" type="number" class="form-control"
+                                            placeholder="Precio mínimo" />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <input id="filtro-precio-max" min="1" type="number" class="form-control"
+                                            placeholder="Precio máximo" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="filtro-group">
+                                <label class="filtro-label">Ordenar por...</label>
+
+                                <select id="ordenar" class="form-select">
+                                    <option value="none">Ver todos</option>
+                                    <option value="precio-asc">Más baratos</option>
+                                    <option value="precio-desc">Más caros</option>
+                                    <option value="stock-asc">Menor stock</option>
+                                    <option value="stock-desc">Mayor stock</option>
+                                    <option value="stock-bajo">Stock bajo</option>
+                                    <option value="inactivos">Dados de baja</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div id="contenedor-productos" class="row g-4"></div>
             </div>
         </div>
     </main>
@@ -228,5 +238,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Reporte Stock -->
+    <div class="modal fade" id="modalReporteStock" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Reporte de Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="contenedor-reporte-stock">
+                    <p class="text-muted">Cargando reporte...</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
