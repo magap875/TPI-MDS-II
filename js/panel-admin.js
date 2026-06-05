@@ -617,3 +617,81 @@ document.addEventListener("click", async (e) => {
     productosGlobal = await obtenerProductos();
     aplicarFiltros();
 });
+
+//reporte de productos con stock bajo
+const PORCENTAJE_ALERTA = 20;
+
+const btnReporteStock = document.getElementById("btn-reporte-stock");
+const contenedorReporteStock = document.getElementById("contenedor-reporte-stock");
+
+if (btnReporteStock) {
+    btnReporteStock.addEventListener("click", generarReporteStock);
+}
+
+async function generarReporteStock() {
+    contenedorReporteStock.innerHTML = "<p class='text-muted'>Cargando reporte...</p>";
+
+    const productos = await obtenerProductos();
+
+    const productosReporte = productos.filter(producto => {
+        const stockActual = Number(producto.stock);
+        const stockMinimo = Number(producto.stockMinimo);
+
+        const esKit = producto.tipoProducto === "KIT";
+
+        const limiteReporte = stockMinimo + (stockMinimo * PORCENTAJE_ALERTA / 100);
+
+        return !esKit && stockActual <= limiteReporte;
+    });
+
+    renderizarReporteStock(productosReporte);
+}
+
+function renderizarReporteStock(productos) {
+    if (productos.length === 0) {
+        contenedorReporteStock.innerHTML = `
+            <div class="alert alert-success mb-0">
+                No hay productos cerca del stock mínimo.
+            </div>
+        `;
+        return;
+    }
+
+    contenedorReporteStock.innerHTML = `
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Stock actual</th>
+                    <th>Stock mínimo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${productos.map(producto => {
+                    const stockActual = Number(producto.stock);
+                    const stockMinimo = Number(producto.stockMinimo);
+
+                    let estado = "Cerca del mínimo";
+
+                    if (stockActual === 0) {
+                        estado = "Sin stock";
+                    } else if (stockActual <= stockMinimo) {
+                        estado = "En mínimo o por debajo";
+                    }
+
+                    return `
+                        <tr>
+                            <td>${producto.id}</td>
+                            <td>${producto.nombre}</td>
+                            <td>${stockActual}</td>
+                            <td>${stockMinimo}</td>
+                            <td>${estado}</td>
+                        </tr>
+                    `;
+                }).join("")}
+            </tbody>
+        </table>
+    `;
+}
