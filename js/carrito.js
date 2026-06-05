@@ -275,7 +275,7 @@ btnVerCliente.addEventListener("click", () => {
     // Crear modal
     const modalHTML = `
         <div class="modal fade" id="modalCliente" tabindex="-1">
-            <div class="modal-dialog modal-confirmacion modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
 
                     <div class="modal-header">
@@ -293,15 +293,19 @@ btnVerCliente.addEventListener("click", () => {
                     <div class="modal-body" id="resultadoCliente">
 
                         <label class="form-label">
-                            Ingrese su DNI
+                            DNI
                         </label>
 
                         <input 
                             type="text"
                             class="form-control mb-3"
                             id="inputDni"
-                            placeholder="Ej: 27294772"
+                            placeholder="Ingrese su DNI"
                         >
+                        <label class="form-label">
+                        Contraseña
+                        </label>
+
                         <input
                             type="password"
                             class="form-control mb-3"
@@ -309,7 +313,7 @@ btnVerCliente.addEventListener("click", () => {
                             placeholder="Ingrese su contraseña"
                         >
                         <button 
-                            class="btn w-100 btn-editar"
+                            class="btn btn-dark w-100"
                             id="btnBuscarCliente">
                             Buscar
                         </button>

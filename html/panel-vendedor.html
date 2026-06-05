@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/estilos.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <title>Panel Vendedor</title>
 </head>
 
@@ -17,30 +16,31 @@
             <div class="container-fluid">
 
                 <a class="navbar-brand" href="../index.html">
-                    <img
-                        style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;"
-                        src="/img/logo.png"
+                    <img style="width: 7.5rem; margin: 0.5rem 0 0.5rem 7rem;" src="/img/logo.png"
                         alt="logo-body-painting">
                 </a>
 
-                <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup">
 
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <a class="nav-link" href="../index.html">
-                            <a class="ver-reportes" href="#verReportes">Ver Reportes</a>
-                            <i class="fa-solid fa-user"></i>
-                        </a>
-                    </div>
-                </div>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
 
-            </div>
+                    <div class="d-flex align-items-center gap-2">
+
+                        <a class="ver-reportes" href="#verReportes">
+                            Ver Reportes
+                        </a>
+
+                        <button class="btn btn-dark btn-sm" id="btnGenerarCupon">
+                            Generar Cupón
+                        </button>
+
+                    </div>
+
+                </div>
         </nav>
     </header>
 
@@ -55,25 +55,25 @@
                 </h2>
 
                 <div class="nav-pedidos">
-                <h3 class="mb-4">
-                    Gestión de pedidos
-                </h3>
+                    <h3 class="mb-4">
+                        Gestión de pedidos
+                    </h3>
 
-                <!-- FILTRO -->
-                <div class="d-flex justify-content-end mb-3">
+                    <!-- FILTRO -->
+                    <div class="d-flex justify-content-end mb-3">
 
-                    <select id="filtro-estado" class="form-select w-auto">
+                        <select id="filtro-estado" class="form-select w-auto">
 
-                        <option value="Todos">Todos</option>
-                        <option value="Pendiente">Pendientes</option>
-                        <option value="Listo">Listos</option>
-                        <option value="Retirado">Retirados</option>
-                        <option value="Entregado">Entregados</option>
-                        <option value="Cancelado">Cancelados</option>
+                            <option value="Todos">Todos</option>
+                            <option value="Pendiente">Pendientes</option>
+                            <option value="Listo">Listos</option>
+                            <option value="Retirado">Retirados</option>
+                            <option value="Entregado">Entregados</option>
+                            <option value="Cancelado">Cancelados</option>
 
-                    </select>
+                        </select>
 
-                </div>
+                    </div>
                 </div>
                 <!-- CONTENEDOR -->
                 <div id="contenedor-pedidos" class="d-flex flex-column gap-3">
@@ -92,7 +92,7 @@
         <p>&copy; 2025 Body Painting. Todos los derechos reservados.</p>
 
     </footer>
-
+    <script src="../js/cupones.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
