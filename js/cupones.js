@@ -1,8 +1,5 @@
 const API_USUARIOS = "https://69e616eace4e908a155ef130.mockapi.io/usuario";
-
 const API_CUPONES = "https://69e61843ce4e908a155ef3b7.mockapi.io/cupon";
-
-const API_PRODUCTOS = "https://69e616eace4e908a155ef130.mockapi.io/producto";
 
 function formatearFecha(fechaISO) {
     const [year, month, day] = fechaISO.split("-");
@@ -14,26 +11,7 @@ document
     .addEventListener("click", abrirModalCupon);
 
 async function abrirModalCupon() {
-
-    const response =
-        await fetch(API_USUARIOS);
-    const responseProductos =
-        await fetch(API_PRODUCTOS);
-
-    const productos =
-        await responseProductos.json();
-
-    let opcionesProductos = "";
-
-    productos.forEach(producto => {
-
-        opcionesProductos += `
-        <option value="${producto.id}">
-            ${producto.nombre}
-        </option>
-    `;
-    });
-
+    const response = await fetch(API_USUARIOS);
     const clientes =
         await response.json();
 
@@ -58,7 +36,7 @@ async function abrirModalCupon() {
                 <div class="modal-header">
 
                     <h5 class="modal-title">
-                        Generar Cupón
+                        Generar cupón
                     </h5>
 
                     <button
@@ -82,19 +60,6 @@ async function abrirModalCupon() {
                         ${opcionesClientes}
 
                     </select>
-
-                    <label class="form-label">
-                        Productos alcanzados
-                        </label>
-
-                        <select
-                            multiple
-                            class="form-select mb-3"
-                            id="productosCupon">
-
-                            ${opcionesProductos}
-
-                        </select>
 
                     <label class="form-label">
                         Tipo de descuento
@@ -279,24 +244,6 @@ async function guardarCupon() {
             "fechaHasta"
         ).value;
 
-    const productosSeleccionados =
-        [...document.getElementById("productosCupon").selectedOptions]
-            .map(op => op.value);
-
-    if (
-        productosSeleccionados.length === 0
-    ) {
-
-        Swal.fire({
-            icon: "error",
-            title:
-                "Seleccione al menos un producto",
-            confirmButtonColor: "#000"
-        });
-
-        return;
-    }
-
     if (
         clientesSeleccionados.length === 0
     ) {
@@ -407,9 +354,6 @@ async function guardarCupon() {
 
         clientes:
             clientesSeleccionados,
-
-        productos:
-            productosSeleccionados,
             
         usado: false,
 
@@ -443,26 +387,33 @@ async function guardarCupon() {
                 : `$${valorDescuento}`;
 
         Swal.fire({
-            icon: "success",
-            title:
-                "Cupón generado correctamente",
-            html: `
-                <p>
-                    <strong>Código:</strong>
-                    ${codigo}
-                </p>
+                icon: "success",
+                title:
+                    "Cupón generado correctamente",
+                html: `
+                    <p>
+                        <strong>Código:</strong>
+                        ${codigo}
+                    </p>
 
-                <p>
-                    <strong>Descuento:</strong>
-                    ${descuentoMostrado}
-                </p>
+                    <p>
+                        <strong>Descuento:</strong>
+                        ${descuentoMostrado}
+                    </p>
 
-                <p>
-                    <strong>Vigencia:</strong>
-                    ${formatearFecha(fechaDesde)} al ${formatearFecha(fechaHasta)}
-                </p>
-            `,
-            confirmButtonColor: "#000"
+                    <p>
+                        <strong>Vigencia:</strong>
+                        ${formatearFecha(fechaDesde)}
+                        al
+                        ${formatearFecha(fechaHasta)}
+                    </p>
+
+                    <p>
+                        <strong>Clientes alcanzados:</strong>
+                        ${clientesSeleccionados.length}
+                    </p>
+                `,
+                confirmButtonColor: "#000"
         });
 
         bootstrap

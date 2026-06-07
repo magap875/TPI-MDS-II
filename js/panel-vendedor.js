@@ -354,7 +354,7 @@ function mostrarModalReportes() {
                     <div class="modal-header">
 
                         <h5 class="modal-title">
-                            Productos Más Vendidos
+                            Productos más vendidos
                         </h5>
 
                         <button
@@ -516,7 +516,7 @@ function mostrarRanking(ranking) {
 
         resultado.innerHTML = `
             <p class="text-muted text-center">
-                No existen ventas en el periodo seleccionado
+                No existen ventas en el periodo seleccionado.
             </p>
         `;
 
@@ -530,7 +530,7 @@ function mostrarRanking(ranking) {
 
                 <tr>
                     <th>Producto</th>
-                    <th>Cantidad Vendida</th>
+                    <th>Cantidad vendida</th>
                 </tr>
 
             </thead>

@@ -1,8 +1,13 @@
 const API_PRODUCTOS = "https://69e616eace4e908a155ef130.mockapi.io/producto";
 const API_CUPONES = "https://69e61843ce4e908a155ef3b7.mockapi.io/cupon";
 let productosGlobal = [];
+let clienteId = null;
+let cuponesDisponiblesCliente = [];
+let totalFinalPedido = 0;
+let cuponAplicado = null;
 const contenedor = document.getElementById("contenedor-carrito");
 const totalCarrito = document.getElementById("total-carrito");
+
 
 async function obtenerProductos() {
     const res = await fetch(API_PRODUCTOS);
@@ -24,107 +29,61 @@ function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-async function aplicarCupon() {
+async function mostrarCuponesDisponibles(clienteId) {
 
-    const codigo =
-        document
-            .getElementById("codigo-cupon")
-            .value
-            .trim();
+    const response = await fetch(API_CUPONES);
 
-    if (!codigo) {
-
-        Swal.fire({
-            icon: "error",
-            title: "Ingrese un código"
-        });
-
-        return;
-    }
-
-    const response =
-        await fetch(API_CUPONES);
-
-    const cupones =
-        await response.json();
-
-    const cupon =
-        cupones.find(
-            c => c.codigo === codigo
-        );
-
-    if (!cupon) {
-
-        Swal.fire({
-            icon: "error",
-            title: "Cupón inválido"
-        });
-
-        return;
-    }
-
-    if (cupon.usado) {
-
-        Swal.fire({
-            icon: "error",
-            title: "Cupón usado"
-        });
-
-        return;
-    }
+    const cupones = await response.json();
 
     const hoy =
         new Date()
             .toISOString()
             .split("T")[0];
 
-    if (
-        hoy < cupon.fechaDesde ||
-        hoy > cupon.fechaHasta
-    ) {
+        cuponesDisponiblesCliente =
+        cupones.filter(c =>
+            c.clientes.includes(String(clienteId))
+            &&
+            !c.usado
+            &&
+            hoy >= c.fechaDesde
+            &&
+            hoy <= c.fechaHasta
+        );
 
-        Swal.fire({
-            icon: "error",
-            title: "Cupón vencido"
-        });
-
+    if (cuponesDisponiblesCliente.length === 0) {
         return;
     }
 
-    const total =
-        obtenerCarrito()
-            .reduce(
-                (acc, item) =>
-                    acc + item.subtotal,
-                0
-            );
+    let html = "";
 
-    if (
-        total <= cupon.valorDescuento
-    ) {
+    cuponesDisponibles.forEach(c => {
 
-        Swal.fire({
-            icon: "error",
-            title: "El descuento supera el total"
-        });
+        const descuento =
+            c.tipoDescuento === "PORCENTAJE"
+                ? `${c.valorDescuento}%`
+                : `$${c.valorDescuento}`;
 
-        return;
-    }
+        html += `
+            <div class="border rounded p-2 mb-2 text-start">
 
-    cuponAplicado = cupon;
+                <strong>Código:</strong>
+                ${c.codigo}
 
-    document
-        .getElementById("codigo-cupon")
-        .disabled = true;
+                <br>
 
-    document
-        .getElementById("btn-aplicar-cupon")
-        .disabled = true;
+                <strong>Descuento:</strong>
+                ${descuento}
 
-    Swal.fire({
-        icon: "success",
-        title: "Cupón válido",
-        text: "Se verificará al confirmar el pedido"
+                <br>
+
+                <strong>Vigencia:</strong>
+                ${formatearFecha(c.fechaDesde)}
+                al
+                ${formatearFecha(c.fechaHasta)}
+
+            </div>
+        `;
     });
 }
 
@@ -144,6 +103,8 @@ function renderizarCarrito() {
     // foreach para llenar el carrito con la tarjeta de cada objeto
     carrito.forEach((item, index) => {
         total += item.subtotal;
+
+        totalFinalPedido = total;
 
         contenedor.innerHTML += `
         <div class="card mb-3 shadow-sm border-0 carrito-card">
@@ -309,7 +270,6 @@ btnVerCliente.addEventListener("click", () => {
     }
     // ATRIBUTOS DEL OBJETO
     //calcula el total
-    let clienteId;
     let clienteNombre;
     let clienteApellido;
     let clienteDirecciones = [];
@@ -471,27 +431,6 @@ btnVerCliente.addEventListener("click", () => {
 
                 let totalMostrado = total;
 
-                if (
-                    cuponAplicado &&
-                    cuponAplicado.clientes.includes(
-                        String(clienteId)
-                    )
-                ) {
-
-                    const productosAlcanzados =
-                        carrito.filter(item =>
-                            cuponAplicado.productos.includes(
-                                String(item.productoId)
-                            )
-                        );
-
-                    if (productosAlcanzados.length > 0) {
-
-                        totalMostrado -=
-                            cuponAplicado.valorDescuento;
-                    }
-                }
-
                 const direcciones =
                     clienteDirecciones;
 
@@ -516,16 +455,44 @@ btnVerCliente.addEventListener("click", () => {
                         `;
                 }
 
-                document.getElementById("tituloModal").innerText = `PEDIDO`
+                document.getElementById("tituloModal").innerText = `Pedido`
                 document.getElementById("resultadoCliente").innerHTML = `
                         <hr>
 
                         <div class="card border-0 shadow-sm p-3 factura-box">
 
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3 position-relative">
                                 <div>
-                                    <h5 class="mb-0 fw-bold">Detalle de Pedido</h5>
+                                    <h5 class="mb-0 fw-bold">Detalle de pedido</h5>
                                 </div>
+
+                            <button
+                                type="button"
+                                id="btnVerCupones"
+                                class="btn btn-light border rounded-circle position-relative shadow-sm"
+                                style="
+                                    width: 48px;
+                                    height: 48px;
+                                "
+                            >
+                                <i class="bi bi-bell-fill fs-5"></i>
+
+                                ${
+                                    cuponesDisponiblesCliente.length > 0
+                                        ? `
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            style="
+                                                font-size: .65rem;
+                                                min-width: 20px;
+                                            "
+                                        >
+                                            ${cuponesDisponiblesCliente.length}
+                                        </span>
+                                    `
+                                        : ""
+                                }
+                            </button>
                             </div>
 
                             <div class="border rounded p-3 mb-3 bg-light">
@@ -560,6 +527,8 @@ btnVerCliente.addEventListener("click", () => {
                                     + Agregar dirección
                                 </button>
 
+                                
+
                             </div>
 
                             <div class="border rounded p-3 mb-3">
@@ -572,20 +541,70 @@ btnVerCliente.addEventListener("click", () => {
 
                             </div>
 
-                            <div class="border-top pt-3">
+                            <div class="border rounded p-3 mb-3 bg-light">
 
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Forma de pago</span>
-                                    <strong>${formaPago}</strong>
-                                </div>
+                            <h6 class="fw-bold mb-3">
+                                Cupón de descuento
+                            </h6>
 
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Total</h5>
+                            <div class="input-group">
 
-                                    <h4 class="mb-0 text-success fw-bold">
-                                        $${totalMostrado}
-                                    </h4>
-                                </div>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="codigoCupon"
+                                    placeholder="Ingrese el código"
+                                >
+
+                                <button
+                                    class="btn btn-dark"
+                                    id="btnAplicarCupon"
+                                >
+                                    Aplicar
+                                </button>
+
+                            </div>
+
+                            <small
+                                id="mensajeCupon"
+                                class="text-success d-block mt-2"
+                            ></small>
+
+                        </div>
+
+                    <div class="border-top pt-3">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Forma de pago</span>
+                            <strong>${formaPago}</strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <h5 class="mb-0">Total</h5>
+
+                            <div class="text-end">
+                                <small
+                                    id="totalAnterior"
+                                    class="text-danger text-decoration-line-through d-none d-block"
+                                ></small>
+
+                                <small
+                                    id="ahorroCupon"
+                                    class="fw-semibold text-success d-none d-block"
+                                ></small>
+
+                                <h3
+                                    id="totalPedido"
+                                    class="mb-0 text-success fw-bold"
+                                >
+                                    $${totalMostrado}
+                                </h3>
+                            </div>
+
+                        </div>
+
+                    </div>
 
                             </div>
 
@@ -604,6 +623,43 @@ btnVerCliente.addEventListener("click", () => {
                         mostrarModalDireccion(clienteId, clienteDirecciones);
                     });
 
+                    document
+                    .getElementById("btnAplicarCupon")
+                    .addEventListener("click", aplicarCupon);
+
+                                    document
+                    .getElementById("btnVerCupones")
+                    .addEventListener("click", () => {
+
+                        let html = "";
+
+                        cuponesDisponiblesCliente.forEach(c => {
+
+                            const descuento =
+                                c.tipoDescuento === "PORCENTAJE"
+                                    ? `${c.valorDescuento}%`
+                                    : `$${c.valorDescuento}`;
+
+                            html += `
+                                <div class="border rounded p-2 mb-2 text-start">
+                                    <strong>Código:</strong> ${c.codigo}<br>
+                                    <strong>Descuento:</strong> ${descuento}<br>
+                                    <strong>Vigencia:</strong>
+                                    ${formatearFecha(c.fechaDesde)}
+                                    al
+                                    ${formatearFecha(c.fechaHasta)}
+                                </div>
+                            `;
+                        });
+
+                        Swal.fire({
+                            title: "Mis cupones",
+                            html: html || "<p>No posee cupones disponibles</p>",
+                            width: 700
+                        });
+
+                    });
+
                 const btnAceptarPedido = document.getElementById("btnAceptarPedido");
 
                 btnAceptarPedido.addEventListener("click", async () => {
@@ -614,50 +670,6 @@ btnVerCliente.addEventListener("click", () => {
 
                     const direccionSeleccionada =
                         direcciones[indexDireccion];
-
-                    if (
-                        cuponAplicado &&
-                        !cuponAplicado.clientes.includes(
-                            String(clienteId)
-                        )
-                    ) {
-
-                        Swal.fire({
-                            icon: "error",
-                            title: "Cupón inválido",
-                            text: "Este cupón no pertenece al cliente"
-                        });
-
-                        cuponAplicado = null;
-                        document.getElementById("codigo-cupon").disabled = false;
-                        document.getElementById("btn-aplicar-cupon").disabled = false;
-                        document.getElementById("codigo-cupon").value = "";
-
-                        return;
-                    }
-                    if (cuponAplicado) {
-                        const productosAlcanzados =
-                            carrito.filter(item =>
-                                cuponAplicado.productos.includes(
-                                    String(item.productoId)
-                                )
-                            );
-                        if (productosAlcanzados.length === 0) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Cupón no aplicable",
-                                text: "Ningún producto del carrito está alcanzado por el cupón"
-                            });
-
-                            cuponAplicado = null;
-                            document.getElementById("codigo-cupon").disabled = false;
-                            document.getElementById("btn-aplicar-cupon").disabled = false;
-                            document.getElementById("codigo-cupon").value = "";
-
-                            return;
-                        }
-                        total -= cuponAplicado.valorDescuento;
-                    }
 
                     const nuevoPedido = {
                         clienteId,
@@ -672,7 +684,7 @@ btnVerCliente.addEventListener("click", () => {
                                 ? cuponAplicado.codigo
                                 : null,
                         domicilioEnvio: `${direccionSeleccionada.calle} ${direccionSeleccionada.numero}${direccionSeleccionada.piso ? `, Piso ${direccionSeleccionada.piso}` : ""}${direccionSeleccionada.dpto ? `, Dpto ${direccionSeleccionada.dpto}` : ""} - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}, ${direccionSeleccionada.pais}`,
-                        total,
+                        total: totalFinalPedido,
                         motivoCancelacion,
                         detalles
                     };
@@ -725,12 +737,14 @@ btnVerCliente.addEventListener("click", () => {
                 return;
             }
 
-            Swal.fire({
+            await Swal.fire({
                 icon: "success",
                 title: "Validación Correcta",
                 showConfirmButton: false,
                 timer: 1500
             });
+
+            await cargarCuponesCliente(cliente.id);
 
             // Guardar datos del cliente
             clienteId = cliente.id;
@@ -740,14 +754,28 @@ btnVerCliente.addEventListener("click", () => {
             clienteDirecciones =
                 cliente.direcciones || [];
 
-        } catch (error) {
+        // } catch (error) {
+        //     Swal.fire({
+        //         icon: "error",
+        //         title: "Error",
+        //         text: "Error al obtener clientes"
+        //     });
+        // }
+
+        }catch (error) {
+            console.error(error);
+
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Error al obtener clientes"
+                text: error.message
             });
         }
     }
+
+function formatearFecha(fecha) {
+    return new Date(fecha).toLocaleDateString("es-AR");
+}
 
     async function guardarPedido(nuevoPedido) {
         const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
@@ -879,13 +907,6 @@ async function iniciar() {
 }
 
 iniciar();
-
-document
-    .getElementById("btn-aplicar-cupon")
-    .addEventListener(
-        "click",
-        aplicarCupon
-    );
 
 // Registrar dirección de envío
 
@@ -1257,3 +1278,167 @@ function mostrarModalDireccion(
     );
 }
 
+async function cargarCuponesCliente(clienteId) {
+
+    const response = await fetch(API_CUPONES);
+
+    const cupones = await response.json();
+
+    const hoy =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+    cuponesDisponiblesCliente =
+        cupones.filter(c =>
+            c.clientes.includes(String(clienteId))
+            &&
+            !c.usado
+            &&
+            hoy >= c.fechaDesde
+            &&
+            hoy <= c.fechaHasta
+        );
+}
+
+async function aplicarCupon() {
+
+    const carrito = obtenerCarrito();
+
+    const codigo =
+        document.getElementById("codigoCupon")
+            .value
+            .trim()
+            .toUpperCase();
+
+    if (!codigo) {
+
+        Swal.fire({
+            icon: "warning",
+            title: "Ingrese un código"
+        });
+
+        return;
+    }
+
+    const response =
+        await fetch(API_CUPONES);
+
+    const cupones =
+        await response.json();
+
+    const cupon =
+        cupones.find(
+            c => c.codigo.toUpperCase() === codigo
+        );
+
+    if (!cupon) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón inexistente"
+        });
+
+        return;
+    }
+
+    const hoy =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+    if (cupon.usado) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón ya utilizado"
+        });
+
+        return;
+    }
+
+    if (
+        hoy < cupon.fechaDesde ||
+        hoy > cupon.fechaHasta
+    ) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón vencido o fuera de vigencia"
+        });
+
+        return;
+    }
+
+    if (
+        !cupon.clientes.includes(
+            String(clienteId)
+        )
+    ) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón no pertenece al cliente"
+        });
+
+        return;
+    }
+
+    cuponAplicado = cupon;
+
+    let total = 0;
+
+    carrito.forEach(item => {
+        total += item.subtotal;
+    });
+
+    let descuento = 0;
+
+    if (cupon.tipoDescuento === "PORCENTAJE") {
+
+        descuento =
+            total * (cupon.valorDescuento / 100);
+
+    } else {
+
+        descuento =
+            cupon.valorDescuento;
+    }
+
+    const totalFinal =
+        Math.max(0, total - descuento);
+
+    const totalAnterior =
+    document.getElementById("totalAnterior");
+
+    totalAnterior.innerText =
+    `Antes: $${total.toLocaleString("es-AR")}`;
+    totalAnterior.classList.remove("d-none");
+
+    const ahorro =
+    document.getElementById("ahorroCupon");
+
+        ahorro.innerText =
+            `Ahorrás $${descuento.toLocaleString("es-AR")}`;
+
+        ahorro.classList.remove("d-none");
+
+    totalFinalPedido = totalFinal;
+
+    document.getElementById("totalPedido")
+    .innerText = `$${totalFinal.toLocaleString("es-AR")}`;
+
+    document.getElementById(
+        "mensajeCupon"
+    ).innerHTML =
+        cupon.tipoDescuento === "PORCENTAJE"
+        ? `Descuento aplicado: <strong>${cupon.valorDescuento}%</strong>`
+        : `Descuento aplicado: <strong>$${cupon.valorDescuento}</strong>`;
+
+    Swal.fire({
+        icon: "success",
+        title: "Cupón aplicado correctamente",
+        timer: 1500,
+        showConfirmButton: false
+    });
+}
