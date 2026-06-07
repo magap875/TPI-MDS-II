@@ -40,7 +40,7 @@ async function mostrarCuponesDisponibles(clienteId) {
             .toISOString()
             .split("T")[0];
 
-        cuponesDisponiblesCliente =
+    cuponesDisponiblesCliente =
         cupones.filter(c =>
             c.clientes.includes(String(clienteId))
             &&
@@ -477,9 +477,8 @@ btnVerCliente.addEventListener("click", () => {
                             >
                                 <i class="bi bi-bell-fill fs-5"></i>
 
-                                ${
-                                    cuponesDisponiblesCliente.length > 0
-                                        ? `
+                                ${cuponesDisponiblesCliente.length > 0
+                        ? `
                                         <span
                                             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                                             style="
@@ -490,8 +489,8 @@ btnVerCliente.addEventListener("click", () => {
                                             ${cuponesDisponiblesCliente.length}
                                         </span>
                                     `
-                                        : ""
-                                }
+                        : ""
+                    }
                             </button>
                             </div>
 
@@ -623,11 +622,11 @@ btnVerCliente.addEventListener("click", () => {
                         mostrarModalDireccion(clienteId, clienteDirecciones);
                     });
 
-                    document
+                document
                     .getElementById("btnAplicarCupon")
                     .addEventListener("click", aplicarCupon);
 
-                                    document
+                document
                     .getElementById("btnVerCupones")
                     .addEventListener("click", () => {
 
@@ -683,6 +682,14 @@ btnVerCliente.addEventListener("click", () => {
                             cuponAplicado
                                 ? cuponAplicado.codigo
                                 : null,
+                        descuentoAplicado: cuponAplicado
+                            ? {
+                                tipo: cuponAplicado.tipoDescuento,
+                                valor: cuponAplicado.valorDescuento
+                            }
+                            : null,
+
+                        totalOriginal: total,
                         domicilioEnvio: `${direccionSeleccionada.calle} ${direccionSeleccionada.numero}${direccionSeleccionada.piso ? `, Piso ${direccionSeleccionada.piso}` : ""}${direccionSeleccionada.dpto ? `, Dpto ${direccionSeleccionada.dpto}` : ""} - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}, ${direccionSeleccionada.pais}`,
                         total: totalFinalPedido,
                         motivoCancelacion,
@@ -754,15 +761,15 @@ btnVerCliente.addEventListener("click", () => {
             clienteDirecciones =
                 cliente.direcciones || [];
 
-        // } catch (error) {
-        //     Swal.fire({
-        //         icon: "error",
-        //         title: "Error",
-        //         text: "Error al obtener clientes"
-        //     });
-        // }
+            // } catch (error) {
+            //     Swal.fire({
+            //         icon: "error",
+            //         title: "Error",
+            //         text: "Error al obtener clientes"
+            //     });
+            // }
 
-        }catch (error) {
+        } catch (error) {
             console.error(error);
 
             Swal.fire({
@@ -773,9 +780,9 @@ btnVerCliente.addEventListener("click", () => {
         }
     }
 
-function formatearFecha(fecha) {
-    return new Date(fecha).toLocaleDateString("es-AR");
-}
+    function formatearFecha(fecha) {
+        return new Date(fecha).toLocaleDateString("es-AR");
+    }
 
     async function guardarPedido(nuevoPedido) {
         const resp = await fetch("https://69fbceecfce564e25916ed52.mockapi.io/pedido", {
@@ -1409,31 +1416,31 @@ async function aplicarCupon() {
         Math.max(0, total - descuento);
 
     const totalAnterior =
-    document.getElementById("totalAnterior");
+        document.getElementById("totalAnterior");
 
     totalAnterior.innerText =
-    `Antes: $${total.toLocaleString("es-AR")}`;
+        `Antes: $${total.toLocaleString("es-AR")}`;
     totalAnterior.classList.remove("d-none");
 
     const ahorro =
-    document.getElementById("ahorroCupon");
+        document.getElementById("ahorroCupon");
 
-        ahorro.innerText =
-            `Ahorrás $${descuento.toLocaleString("es-AR")}`;
+    ahorro.innerText =
+        `Ahorrás $${descuento.toLocaleString("es-AR")}`;
 
-        ahorro.classList.remove("d-none");
+    ahorro.classList.remove("d-none");
 
     totalFinalPedido = totalFinal;
 
     document.getElementById("totalPedido")
-    .innerText = `$${totalFinal.toLocaleString("es-AR")}`;
+        .innerText = `$${totalFinal.toLocaleString("es-AR")}`;
 
     document.getElementById(
         "mensajeCupon"
     ).innerHTML =
         cupon.tipoDescuento === "PORCENTAJE"
-        ? `Descuento aplicado: <strong>${cupon.valorDescuento}%</strong>`
-        : `Descuento aplicado: <strong>$${cupon.valorDescuento}</strong>`;
+            ? `Descuento aplicado: <strong>${cupon.valorDescuento}%</strong>`
+            : `Descuento aplicado: <strong>$${cupon.valorDescuento}</strong>`;
 
     Swal.fire({
         icon: "success",

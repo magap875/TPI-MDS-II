@@ -196,6 +196,31 @@ async function renderizarPedidos() {
                     </div>
 
                         <div class="text-end">
+                        ${pedido.cupon
+                                    ? `
+                                <small class="d-block">
+                                    Cupón: ${pedido.cupon}
+                                </small>
+
+                                <small class="d-block text-success">
+                                    Descuento:
+                                    ${pedido.descuentoAplicado?.valor || 0}
+                                    ${pedido.descuentoAplicado?.tipo === "PORCENTAJE"
+                                        ? "%"
+                                        : "$"}
+                                </small>
+
+                                <small class="d-block text-muted">
+                                    Total original:
+                                    $${pedido.totalOriginal || pedido.total}
+                                </small>
+                            `
+                                    : `
+                                <small class="d-block text-muted">
+                                    Sin descuento aplicado
+                                </small>
+                            `
+                                }
 
                             <small class="text-muted d-block">
                                 Total del pedido
@@ -227,7 +252,7 @@ function activarEventosActualizar() {
     document.querySelectorAll(".btn-actualizar").forEach(btn => {
 
         btn.addEventListener("click", async () => {
-            
+
             const id = btn.dataset.id;
             const nuevoEstado = btn.dataset.nuevo;
 
@@ -252,12 +277,12 @@ function activarEventosCancelar() {
     document.querySelectorAll(".btn-cancelar").forEach(btn => {
 
         btn.addEventListener("click", async () => {
-        
+
             const id = btn.dataset.id;
             const estado = btn.dataset.estado;
 
             if (estado !== "Pendiente") {
-                
+
                 Swal.fire({
                     title: "No permitido",
                     text: "Solo se permite cancelar pedidos pendientes",
@@ -265,7 +290,7 @@ function activarEventosCancelar() {
                 });
 
                 return;
-            
+
             }
 
             const { value: motivo } = await Swal.fire({
@@ -449,7 +474,7 @@ function mostrarModalReportes() {
         .getElementById("btnGenerarReporte")
         .addEventListener("click", generarReporte);
 
-}    
+}
 
 
 async function generarReporte() {
