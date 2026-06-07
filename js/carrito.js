@@ -112,7 +112,7 @@ async function aplicarCupon() {
     }
 
     cuponAplicado = cupon;
-    
+
     document
         .getElementById("codigo-cupon")
         .disabled = true;
@@ -469,6 +469,29 @@ btnVerCliente.addEventListener("click", () => {
             await buscarCliente(dni);
             if (clienteId != null) {
 
+                let totalMostrado = total;
+
+                if (
+                    cuponAplicado &&
+                    cuponAplicado.clientes.includes(
+                        String(clienteId)
+                    )
+                ) {
+
+                    const productosAlcanzados =
+                        carrito.filter(item =>
+                            cuponAplicado.productos.includes(
+                                String(item.productoId)
+                            )
+                        );
+
+                    if (productosAlcanzados.length > 0) {
+
+                        totalMostrado -=
+                            cuponAplicado.valorDescuento;
+                    }
+                }
+
                 const direcciones =
                     clienteDirecciones;
 
@@ -560,7 +583,7 @@ btnVerCliente.addEventListener("click", () => {
                                     <h5 class="mb-0">Total</h5>
 
                                     <h4 class="mb-0 text-success fw-bold">
-                                        $${total}
+                                        $${totalMostrado}
                                     </h4>
                                 </div>
 
