@@ -2,6 +2,8 @@ const API_USUARIOS = "https://69e616eace4e908a155ef130.mockapi.io/usuario";
 
 const API_PEDIDOS = "https://69fbceecfce564e25916ed52.mockapi.io/pedido";
 
+window.API_CUPONES = "https://69e61843ce4e908a155ef3b7.mockapi.io/cupon";
+
 document
     .getElementById("btnHistorialPedidos")
     .addEventListener("click", abrirModalHistorial);
@@ -277,7 +279,7 @@ async function mostrarHistorial(
                         </p>
 
                         <button
-                            class="btn btn-outline-dark btn-sm btn-detalle-pedido"
+                            class="btn btn-outline-dark btn-sm btn-detalle-pedido w-100"
                             data-pedido='${JSON.stringify(pedido)}'>
                             Ver detalle
                         </button>
@@ -326,104 +328,208 @@ async function mostrarHistorial(
     }
 }
 
-function mostrarDetallePedido(
-    pedido
-) {
+async function mostrarDetallePedido(pedido) {
 
-    let detallesHTML = "";
+    // ── 1. Cupón ──────────────────────────────────────────────────────────────
+    let cuponEncontrado = null;
 
-    pedido.detalles.forEach(
-        item => {
-
-            detallesHTML += `
-            <div class="border rounded p-2 mb-2">
-
-                <div>
-                    <strong>
-                        ${item.nombreProducto}
-                    </strong>
-                </div>
-
-                <div>
-                    Cantidad:
-                    ${item.cantidad}
-                </div>
-
-                <div>
-                    Precio:
-                    $${item.precioUnitario}
-                </div>
-
-                <div>
-                    Subtotal:
-                    $${item.subtotal}
-                </div>
-
-            </div>
-            `;
+    if (pedido.cupon) {
+        try {
+            const resCupones = await fetch(window.API_CUPONES);
+            const cupones    = await resCupones.json();
+            cuponEncontrado  = cupones.find(c => c.codigo === pedido.cupon) ?? null;
+        } catch {
+            console.warn("No se pudieron cargar los cupones.");
         }
+    }
+
+    // ── 2. Helpers ────────────────────────────────────────────────────────────
+    const formatFecha  = iso =>
+        new Date(iso).toLocaleString("es-AR", {
+            day: "2-digit", month: "short", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+        });
+
+    const formatMoney  = n =>
+        "$" + Number(n).toLocaleString("es-AR");
+
+    const estadoClass  = estado => {
+        const e = estado.toLowerCase();
+        if (e.includes("entregado"))                    return "color:#2e7d32;background:#e8f5e9";
+        if (e.includes("cancelado"))                    return "color:#c62828;background:#ffebee";
+        if (e.includes("proceso") || e.includes("preparación")) return "color:#1565c0;background:#e3f2fd";
+        return "color:#e65100;background:#fff3e0";
+    };
+
+    const descuentoLabel = c =>
+        c.tipoDescuento === "PORCENTAJE"
+            ? `${c.valorDescuento}%`
+            : formatMoney(c.valorDescuento);
+
+    // ── Cálculo del resumen de cuenta ─────────────────────────────────────────
+    const subtotalProductos = pedido.detalles.reduce(
+        (acc, item) => acc + Number(item.subtotal), 0
     );
 
-    Swal.fire({
+    const montoDescuento = cuponEncontrado
+        ? cuponEncontrado.tipoDescuento === "PORCENTAJE"
+            ? subtotalProductos * (cuponEncontrado.valorDescuento / 100)
+            : Number(cuponEncontrado.valorDescuento)
+        : 0;
 
-        width: 800,
+    // ── 3. HTML de ítems ──────────────────────────────────────────────────────
+    const itemsHTML = pedido.detalles.map(item => `
+        <div style="
+            display:flex; justify-content:space-between; align-items:center;
+            padding:10px 12px; border-radius:8px;
+            background:white; margin-bottom:8px; border:1px solid black"">
 
-        title:
-            `Pedido #${pedido.idPedido || pedido.id}`,
+            <div style="text-align:left">
+                <div style="font-weight:500; font-size:14px; color:#111">
+                    ${item.nombreProducto}
+                </div>
+                <div style="font-size:12px; color:#777; margin-top:2px">
+                    ${item.cantidad} × ${formatMoney(item.precioUnitario)}
+                </div>
+            </div>
 
-        html: `
+            <div style="font-weight:500; font-size:14px; color:white;white-space:nowrap">
+                ${formatMoney(item.subtotal)}
+            </div>
 
-            <div class="text-start">
+        </div>
+    `).join("");
 
-                <p>
-                    <strong>Fecha:</strong>
-                    ${new Date(
-                        pedido.fechaPedido
-                    ).toLocaleString()}
-                </p>
+    // ── 4. HTML del cupón (opcional) ──────────────────────────────────────────
+    const cuponHTML = cuponEncontrado ? `
+        <div style="
+            display:flex; align-items:center; gap:10px;
+            background:#e3f2fd; border-radius:8px;
+            padding:10px 14px; font-size:13px; color:#1565c0;">
 
-                <p>
-                    <strong>Estado:</strong>
-                    ${pedido.estadoPedido}
-                </p>
+            <span>
+                Cupón <strong>${cuponEncontrado.codigo}</strong> aplicado
+                — descuento de <strong>${descuentoLabel(cuponEncontrado)}</strong>
+            </span>
 
-                <p>
-                    <strong>Forma de pago:</strong>
-                    ${pedido.formaPago}
-                </p>
+        </div>
+    ` : "";
 
-                <p>
-                    <strong>Domicilio:</strong>
-                    ${pedido.domicilioEnvio}
-                </p>
+    // ── 5. HTML del resumen de cuenta ─────────────────────────────────────────
+    const resumenHTML = `
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px">
 
-                ${
-                    pedido.motivoCancelacion
-                        ?
-                        `
-                        <p class="text-danger">
-                            <strong>
-                                Motivo cancelación:
-                            </strong>
-                            ${pedido.motivoCancelacion}
-                        </p>
-                        `
-                        :
-                        ""
-                }
+            <!-- Subtotal productos -->
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:#555">
+                <span>Subtotal productos</span>
+                <span>${formatMoney(subtotalProductos)}</span>
+            </div>
 
-                <hr>
+            <!-- Descuento (solo si hay cupón) -->
+            ${cuponEncontrado ? `
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:#1565c0">
+                <span>Descuento (${descuentoLabel(cuponEncontrado)})</span>
+                <span>− ${formatMoney(montoDescuento)}</span>
+            </div>
+            ` : ""}
 
-                ${detallesHTML}
+            <!-- Divisor fino -->
+            <hr style="border:none; border-top:1px solid #eee; margin:2px 0">
 
-                <hr>
+            <!-- Total pagado -->
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <span style="font-size:15px; font-weight:500; color:#111">Total pagado</span>
+                <span style="font-size:20px; font-weight:600; color:#111">${formatMoney(pedido.total)}</span>
+            </div>
 
-                <h5>
-                    Total:
-                    $${pedido.total}
-                </h5>
+        </div>
+    `;
+
+    // ── 6. HTML completo del Swal ──────────────────────────────────────────────
+    const html = `
+        <div style="text-align:left; font-family:inherit">
+
+            <!-- Metadata -->
+            <div style="
+                display:grid; grid-template-columns:1fr 1fr;
+                gap:10px; margin-bottom:20px;">
+
+                <div style="background:white; border-radius:8px; padding:10px 14px; border:1px solid black"">
+                    <div style="font-size:11px; font-weight:600; color:#888;
+                                text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">
+                        Fecha
+                    </div>
+                    <div style="font-size:13px; color:#111">
+                        ${formatFecha(pedido.fechaPedido)}
+                    </div>
+                </div>
+
+                <div style="background:white; border-radius:8px; padding:10px 14px; border:1px solid black"">
+                    <div style="font-size:11px; font-weight:600; color:#888;
+                                text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">
+                        Estado
+                    </div>
+                    <span style="
+                        font-size:12px; font-weight:500;
+                        padding:3px 10px; border-radius:20px;
+                        ${estadoClass(pedido.estadoPedido)}">
+                        ${pedido.estadoPedido}
+                    </span>
+                </div>
+
+                <div style="background:white; border-radius:8px; padding:10px 14px; border:1px solid black"">
+                    <div style="font-size:11px; font-weight:600; color:#888;
+                                text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">
+                        Forma de pago
+                    </div>
+                    <div style="font-size:13px; color:#111">
+                        ${pedido.formaPago}
+                    </div>
+                </div>
+
+                <div style="background:white; border-radius:8px; padding:10px 14px; border:1px solid black"">
+                    <div style="font-size:11px; font-weight:600; color:#888;
+                                text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">
+                        Domicilio
+                    </div>
+                    <div style="font-size:12px; color:#111;line-height:1.4">
+                        ${pedido.domicilioEnvio}
+                    </div>
+                </div>
 
             </div>
-        `
+
+            <!-- Divisor -->
+            <hr style="border:none; border-top:1px solid #eee; margin:0 0 16px">
+
+            <!-- Ítems -->
+            <div style="font-size:11px; font-weight:600; color:#888;
+                        text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px;">
+                Productos
+            </div>
+
+            ${itemsHTML}
+
+            <!-- Cupón -->
+            ${cuponEncontrado ? `<div style="margin-top:12px">${cuponHTML}</div>` : ""}
+
+            <!-- Divisor -->
+            <hr style="border:none; border-top:1px solid #eee; margin:16px 0 0">
+
+            <!-- Resumen de cuenta -->
+            ${resumenHTML}
+
+        </div>
+    `;
+
+    // ── 7. Swal ───────────────────────────────────────────────────────────────
+    Swal.fire({
+        width:           640,
+        title:           `Pedido #${pedido.idPedido || pedido.id}`,
+        html:            html,
+        confirmButtonText: "Cerrar",
+        confirmButtonColor: "#111",
+        showClass:       { popup: "swal2-show" },
+        hideClass:       { popup: "swal2-hide" }
     });
 }
