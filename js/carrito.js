@@ -1,4 +1,5 @@
 const API_PRODUCTOS = "https://69e616eace4e908a155ef130.mockapi.io/producto";
+const API_CUPONES = "https://69e61843ce4e908a155ef3b7.mockapi.io/cupon";
 let productosGlobal = [];
 const contenedor = document.getElementById("contenedor-carrito");
 const totalCarrito = document.getElementById("total-carrito");
@@ -21,6 +22,110 @@ function obtenerCarrito() {
 
 function guardarCarrito(carrito) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+async function aplicarCupon() {
+
+    const codigo =
+        document
+            .getElementById("codigo-cupon")
+            .value
+            .trim();
+
+    if (!codigo) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Ingrese un código"
+        });
+
+        return;
+    }
+
+    const response =
+        await fetch(API_CUPONES);
+
+    const cupones =
+        await response.json();
+
+    const cupon =
+        cupones.find(
+            c => c.codigo === codigo
+        );
+
+    if (!cupon) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón inválido"
+        });
+
+        return;
+    }
+
+    if (cupon.usado) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón usado"
+        });
+
+        return;
+    }
+
+    const hoy =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+    if (
+        hoy < cupon.fechaDesde ||
+        hoy > cupon.fechaHasta
+    ) {
+
+        Swal.fire({
+            icon: "error",
+            title: "Cupón vencido"
+        });
+
+        return;
+    }
+
+    const total =
+        obtenerCarrito()
+            .reduce(
+                (acc, item) =>
+                    acc + item.subtotal,
+                0
+            );
+
+    if (
+        total <= cupon.valorDescuento
+    ) {
+
+        Swal.fire({
+            icon: "error",
+            title: "El descuento supera el total"
+        });
+
+        return;
+    }
+
+    cuponAplicado = cupon;
+    
+    document
+        .getElementById("codigo-cupon")
+        .disabled = true;
+
+    document
+        .getElementById("btn-aplicar-cupon")
+        .disabled = true;
+
+    Swal.fire({
+        icon: "success",
+        title: "Cupón válido",
+        text: "Se verificará al confirmar el pedido"
+    });
 }
 
 function renderizarCarrito() {
@@ -219,6 +324,9 @@ btnVerCliente.addEventListener("click", () => {
     carrito.forEach((item) => {
         total += item.subtotal;
     });
+
+    // El descuento se aplicará después de validar cliente y productos
+
     const motivoCancelacion = "";
     const detalles = carrito;
     const detallesHTML = detalles.map(item => `
@@ -484,6 +592,50 @@ btnVerCliente.addEventListener("click", () => {
                     const direccionSeleccionada =
                         direcciones[indexDireccion];
 
+                    if (
+                        cuponAplicado &&
+                        !cuponAplicado.clientes.includes(
+                            String(clienteId)
+                        )
+                    ) {
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Cupón inválido",
+                            text: "Este cupón no pertenece al cliente"
+                        });
+
+                        cuponAplicado = null;
+                        document.getElementById("codigo-cupon").disabled = false;
+                        document.getElementById("btn-aplicar-cupon").disabled = false;
+                        document.getElementById("codigo-cupon").value = "";
+
+                        return;
+                    }
+                    if (cuponAplicado) {
+                        const productosAlcanzados =
+                            carrito.filter(item =>
+                                cuponAplicado.productos.includes(
+                                    String(item.productoId)
+                                )
+                            );
+                        if (productosAlcanzados.length === 0) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Cupón no aplicable",
+                                text: "Ningún producto del carrito está alcanzado por el cupón"
+                            });
+
+                            cuponAplicado = null;
+                            document.getElementById("codigo-cupon").disabled = false;
+                            document.getElementById("btn-aplicar-cupon").disabled = false;
+                            document.getElementById("codigo-cupon").value = "";
+
+                            return;
+                        }
+                        total -= cuponAplicado.valorDescuento;
+                    }
+
                     const nuevoPedido = {
                         clienteId,
                         clienteNombre,
@@ -492,6 +644,10 @@ btnVerCliente.addEventListener("click", () => {
                         fechaPedido,
                         estadoPedido,
                         formaPago,
+                        cupon:
+                            cuponAplicado
+                                ? cuponAplicado.codigo
+                                : null,
                         domicilioEnvio: `${direccionSeleccionada.calle} ${direccionSeleccionada.numero}${direccionSeleccionada.piso ? `, Piso ${direccionSeleccionada.piso}` : ""}${direccionSeleccionada.dpto ? `, Dpto ${direccionSeleccionada.dpto}` : ""} - ${direccionSeleccionada.localidad}, ${direccionSeleccionada.provincia}, ${direccionSeleccionada.pais}`,
                         total,
                         motivoCancelacion,
@@ -583,6 +739,25 @@ btnVerCliente.addEventListener("click", () => {
         if (resp.ok) {
 
             await actualizarStockProductos(detalles);
+
+            if (cuponAplicado) {
+
+                await fetch(
+                    `${API_CUPONES}/${cuponAplicado.id}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            ...cuponAplicado,
+                            usado: true
+                        })
+                    }
+                );
+            }
             modal.hide();
 
             Swal.fire({
@@ -681,6 +856,13 @@ async function iniciar() {
 }
 
 iniciar();
+
+document
+    .getElementById("btn-aplicar-cupon")
+    .addEventListener(
+        "click",
+        aplicarCupon
+    );
 
 // Registrar dirección de envío
 

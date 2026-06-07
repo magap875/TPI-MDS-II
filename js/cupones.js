@@ -410,6 +410,8 @@ async function guardarCupon() {
 
         productos:
             productosSeleccionados,
+            
+        usado: false,
 
         fechaCreacion:
             new Date().toISOString()
